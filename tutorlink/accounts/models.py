@@ -56,3 +56,25 @@ class TutorProfile(models.Model):
     qualification = models.CharField(max_length=40, choices=QUALIFICATION_CHOICES)
     years_experience = models.PositiveIntegerField(default=0)
     teaching_mode = models.CharField(max_length=10, choices=TEACHING_MODE_CHOICES)
+
+LEVEL_CHOICES = [
+    ('P1', 'Primary 1'),
+    ('P2', 'Primary 2'),
+    ('P3', 'Primary 3'),
+    ('P4', 'Primary 4'),
+    ('P5', 'Primary 5'),
+    ('P6', 'Primary 6'),
+    ('S1', 'Secondary 1'),
+    ('S2', 'Secondary 2'),
+    ('S3', 'Secondary 3'),
+    ('S4', 'Secondary 4'),
+    ('S5', 'Secondary 5'),
+    ('JC1', 'JC 1'),
+    ('JC2', 'JC 2'),
+]
+
+class Child(models.Model):
+    parent = models.Model.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    level = models.CharField(max_length=3, choices=LEVEL_CHOICES)
