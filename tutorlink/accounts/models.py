@@ -74,7 +74,7 @@ LEVEL_CHOICES = [
 ]
 
 class Child(models.Model):
-    parent = models.Model.ForeignKey(User, on_delete=models.CASCADE)
+    parent = models.ForeignKey(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     level = models.CharField(max_length=3, choices=LEVEL_CHOICES)
