@@ -33,3 +33,26 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+TEACHING_MODE_CHOICES = [
+    ('IN_PERSON', 'In person'),
+    ('ONLINE', 'Online'),
+    ('HYBRID', 'Hybrid'),
+]
+
+QUALIFICATION_CHOICES = [
+    ('STUDENT', 'Current university student'),
+    ('DIPLOMA', 'Diploma'),
+    ('DEGREE', 'Degree'),
+    ('POSTGRAD', 'Masters or PhD'),
+    ('NIE', 'NIE-trained / MOE teacher'),
+    ('OTHER', 'Other'),
+]
+
+class TutorProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500)
+    qualification = models.CharField(max_length=40, choices=QUALIFICATION_CHOICES)
+    years_experience = models.PositiveIntegerField(default=0)
+    teaching_mode = models.CharField(max_length=10, choices=TEACHING_MODE_CHOICES)
