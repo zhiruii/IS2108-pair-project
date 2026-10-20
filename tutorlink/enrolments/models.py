@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 # models:
 # EnrolmentRequest (DONE)
-# Package
+# Package (DONE)
 # Lesson
 # RescheduleRequest
 
@@ -107,3 +107,59 @@ class Package(models.Model):
 
     def __str__(self):
         return f"Package #{self.pk}: {self.enrolment_request.child.first_name}, {self.enrolment_request.listing}"
+
+
+class Lesson(models.Model):
+
+    STATUS_CHOICES = [
+        ("SCHEDULED", "Scheduled"),
+        ("COMPLETED", "Completed"),
+        ("CANCELLED", "Cancelled"),
+        ("RESCHEDULED", "Rescheduled"),
+    ]
+
+    # many lessons per package -> ForeignKey
+    package = models.ForeignKey(
+        Package,
+        related_name="lessons",
+        # if a package has lessons, it cannot be deleted
+        on_delete=models.RESTRICT,
+    )
+    date = models.DateField()
+    # give each lesson its own time columns that are initially empty
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    status = models.CharField(
+        max_length=11, choices=STATUS_CHOICES, default="SCHEDULED"
+    )
+    completed_at = models.DateTimeField(null=True, blank=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    commission = models.DecimalField(max_digits=6, decimal_places=2)
+    tutor_amount = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        request = self.package.enrolment_request
+        return f"{request.child.first_name}: {request.listing.get_subject_display()}, {self.date:%a %d %b} {self.start_time:%H:%M}-{self.end_time:%H:%M} [{self.get_status_display()}]"
+
+    class Meta:
+        ordering = ["date", "start_time"]
+        constraints = [
+            # end time is after the start time
+            models.CheckConstraint(
+                condition=models.Q(end_time__gt=models.F("start_time")),
+                name="lesson_end_time_greater_than_start_time",
+            ),
+            # price is above 0
+            models.CheckConstraint(
+                condition=models.Q(price__gt=0),
+                name="lesson_price_greater_than_0",
+            ),
+            # commission + tutor_amount = price
+            models.CheckConstraint(
+                condition=models.Q(
+                    price=models.F("commission") + models.F("tutor_amount")
+                ),
+                name="lesson_commission_and_tutor_amount_equals_price",
+            ),
+        ]
+
