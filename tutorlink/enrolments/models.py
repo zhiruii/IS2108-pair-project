@@ -3,12 +3,14 @@ from accounts.models import Child
 from listings.models import Listing
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.conf import settings
+from datetime import datetime, timedelta
 
 # models:
 # EnrolmentRequest (DONE)
 # Package (DONE)
-# Lesson
-# RescheduleRequest
+# Lesson (DONE)
+# RescheduleRequest (DONE)
 
 
 class EnrolmentRequest(models.Model):
@@ -163,3 +165,60 @@ class Lesson(models.Model):
             ),
         ]
 
+
+class RescheduleRequest(models.Model):
+
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("ACCEPTED", "Accepted"),
+        ("DECLINED", "Declined"),
+        ("EXPIRED", "Expired"),
+    ]
+
+    # a lesson with reschedule requests can’t be deleted, which keeps its history
+    lesson = models.ForeignKey(
+        Lesson, on_delete=models.RESTRICT, related_name="reschedule_requests"
+    )
+    # if the user who proposed it is deleted, the request goes with them
+    # (users with bookings are already blocked from deletion)
+    proposed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reschedule_requests",
+    )
+    new_date = models.DateField()
+    new_start_time = models.TimeField()
+    new_end_time = models.TimeField()
+    reason = models.TextField(blank=True)
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default="PENDING")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            # new end time is after new start time
+            models.CheckConstraint(
+                condition=models.Q(new_end_time__gt=models.F("new_start_time")),
+                name="rescheduled_req_end_time_greater_than_start_time",
+            ),
+        ]
+
+    def __str__(self):
+        return f"Reschedule {self.lesson} -> {self.new_date:%a %d %b} {self.new_start_time:%H:%M}-{self.new_end_time:%H:%M} [{self.get_status_display()}]"
+
+    def clean(self):
+        # the request must be made at least 24 hours before the lesson
+        if self.lesson_id is not None and self.pk is None:
+            lesson_start = datetime.combine(self.lesson.date, self.lesson.start_time)
+            lesson_start = timezone.make_aware(lesson_start)
+            if timezone.now() > lesson_start - timedelta(hours=24):
+                raise ValidationError(
+                    "Reschedule requests must be made at least 24 hours before the lesson."
+                )
+        # the new slot must be in the future
+        if self.new_date and self.new_start_time and self.pk is None:
+            new_start = datetime.combine(self.new_date, self.new_start_time)
+            new_start = timezone.make_aware(new_start)
+            if new_start < timezone.now():
+                raise ValidationError(
+                    "The new lesson time must be in the future."
+                )
