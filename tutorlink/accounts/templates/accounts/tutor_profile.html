@@ -1,0 +1,15 @@
+<html>
+    <h1>My Profile</h1>
+    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Phone: {{ user.phone }}</p>
+    <p>Address: {{ user.address }}</p>
+    <p>Date of birth: {{ user.date_of_birth }}</p>
+    <p>Gender: {{ user.get_gender_display }}</p>
+    <hr>
+    <p>Bio: {{ profile.bio }}</p>
+    <p>Qualification: {{ profile.get_qualification_display }}</p>
+    <p>Years of experience: {{ profile.years_experience }}</p>
+    <p>Teaching mode: {{ profile.get_teaching_mode_display }}</p>
+    <a href="{% url 'tutor_profile_edit' %}">Edit profile</a>
+</html>

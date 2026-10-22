@@ -1,0 +1,8 @@
+<html>
+    <h1>Delete {{ child.first_name }}?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, delete</button>
+    </form>
+    <a href="{% url 'child_list' %}">Cancel</a>
+</html>

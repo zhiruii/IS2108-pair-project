@@ -1,0 +1,10 @@
+<html>
+    <h1>Edit Profile</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ user_form }}
+        {{ profile_form }}
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'tutor_profile' %}">Cancel</a>
+</html>

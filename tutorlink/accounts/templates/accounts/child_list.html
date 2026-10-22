@@ -1,0 +1,18 @@
+<html>
+    <h1>My Children</h1>
+    {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+    <a href="{% url 'child_create' %}">Add a child</a>
+    <ul>
+    {% for child in children %}
+        <li>
+            <!--child.get_level_display() to show Primary 4 instead of P4-->
+            {{ child.first_name }} {{ child.last_name }} ({{ child.get_level_display }})
+            <a href="{% url 'child_edit' child.id %}">Edit</a>
+            <a href="{% url 'child_delete' child.id %}">Delete</a>
+        </li>
+    {% empty %}
+        <li>No children yet.</li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'parent_profile' %}">Back to My Profile</a>
+</html>
