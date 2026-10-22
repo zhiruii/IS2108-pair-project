@@ -35,3 +35,12 @@ class ChildProfileForm(forms.ModelForm):
     class Meta:
         model = Child
         fields = ['first_name', 'last_name', 'level']
+
+# General form for all users
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone', 'address', 'date_of_birth', 'gender']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+        }

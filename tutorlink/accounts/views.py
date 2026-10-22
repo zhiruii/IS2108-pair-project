@@ -5,7 +5,7 @@ from django.db.models import RestrictedError
 from django.contrib import messages
 
 from .models import TutorProfile, Child
-from .forms import SignupForm, TutorProfileForm, EmailLoginForm, ChildProfileForm
+from .forms import SignupForm, TutorProfileForm, EmailLoginForm, ChildProfileForm, UserProfileForm
 
 
 # Create your views here.
@@ -67,6 +67,38 @@ def tutor_profile_create_view(request):
         form = TutorProfileForm()
     return render(request, 'accounts/tutor_profile_create.html', {'form': form})
 
+@login_required
+def tutor_profile_view(request):
+    if request.user.role != 'TUTOR':
+        return redirect('index')
+    profile = TutorProfile.objects.filter(user=request.user).first()
+    if profile is None:
+        return redirect('tutor_profile_create')
+    return render(request, 'accounts/tutor_profile.html', {'profile': profile})
+
+@login_required
+def tutor_profile_edit_view(request):
+    if request.user.role != 'TUTOR':
+        return redirect('index')
+    profile = get_object_or_404(TutorProfile, user=request.user)
+
+    # Use general UserProfileForm and specific TutorProfileForm
+    if request.method == 'POST':
+        user_form = UserProfileForm(request.POST, instance=request.user)
+        profile_form = TutorProfileForm(request.POST, instance=profile)
+        user_ok = user_form.is_valid()
+        profile_ok = profile_form.is_valid()
+        if user_ok and profile_ok:
+            user_form.save()
+            profile_form.save()
+            return redirect('tutor_profile')
+    else:
+        user_form = UserProfileForm(instance=request.user)
+        profile_form = TutorProfileForm(instance=profile)
+    return render(request, 'accounts/tutor_profile_edit.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    })
 
 @login_required
 def child_list_view(request):
@@ -118,3 +150,24 @@ def child_delete_view(request, child_id):
             messages.error(request, 'This child has enrolment requests and cannot be deleted.')
         return redirect('child_list')
     return render(request, 'accounts/child_confirm_delete.html', {'child': child})
+
+
+@login_required
+def parent_profile_view(request):
+    if request.user.role != 'PARENT':
+        return redirect('index')
+    return render(request, 'accounts/parent_profile.html')
+
+
+@login_required
+def parent_profile_edit_view(request):
+    if request.user.role != 'PARENT':
+        return redirect('index')
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('parent_profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+    return render(request, 'accounts/parent_profile_edit.html', {'form': form})
