@@ -4,6 +4,18 @@
 
 {% if user.is_authenticated %}
     <p>Logged in as {{ user.email }}</p>
+
+    {% if user.role == 'PARENT' %}
+        <a href="{% url 'parent_profile' %}">My profile</a>
+        <a href="{% url 'child_list' %}">My children</a>
+        
+    {% elif user.role == 'TUTOR' %}
+        <a href="{% url 'tutor_profile' %}">My profile</a>
+
+    {% elif user.role == 'STAFF' %}
+        <p>placeholder</p>
+    {% endif %}
+
     <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Log out</button>
