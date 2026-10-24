@@ -1,0 +1,12 @@
+<html>
+    <h1>Edit {{ target.email }}</h1>
+    <p>Role: {{ target.get_role_display }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Save</button>
+    </form>
+
+    <a href="{% url 'admin_user_list' %}">Cancel</a>
+</html>
