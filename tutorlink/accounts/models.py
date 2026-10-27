@@ -78,3 +78,6 @@ class Child(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     level = models.CharField(max_length=3, choices=LEVEL_CHOICES)
+    
+    def __str__(self):
+        return f"{self.first_name}"

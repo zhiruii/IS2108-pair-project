@@ -1,3 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from listings.models import Listing
+from accounts.models import Child
+from .models import EnrolmentRequest
+from .forms import EnrolmentRequestForm
 
 # Create your views here.
+@login_required
+def send_enrolment_request_view(request, pk):
+    if request.user.role != 'PARENT':
+        return redirect('index')
+    listing = get_object_or_404(Listing, pk=pk, status='OPEN')
+    children = Child.objects.filter(parent=request.user)
+    if not children.exists():
+        return redirect('child_create')
+
+    if request.method == 'POST':
+        form = EnrolmentRequestForm(request.POST, instance=EnrolmentRequest(listing=listing), children=children)
+        if form.is_valid():
+            form.save()
+            return redirect('parent_listings_view')
+    
+    else:
+        form = EnrolmentRequestForm(children=children)
+        
+    return render(request, 'enrolments/send_enrolment_request_view.html', {'form': form, 'listing': listing})

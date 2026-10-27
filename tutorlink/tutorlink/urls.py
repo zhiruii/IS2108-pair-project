@@ -22,4 +22,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('adminpanel/', include('adminpanel.urls')),
     path('listings/', include('listings.urls')),
+    path('enrolments/', include('enrolments.urls')),
 ]

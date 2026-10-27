@@ -10,8 +10,8 @@ from django.contrib.auth.decorators import login_required
 def parent_listings_view(request):
     if request.user.role != 'PARENT':
         return redirect('index')
-    
-    return render(request, 'listings/parent_view_listings.html', )
+    listings = Listing.objects.filter(status='OPEN')
+    return render(request, 'listings/parent_view_listings.html', {'listings': listings})
 
 @login_required
 def tutor_listings_view(request):
