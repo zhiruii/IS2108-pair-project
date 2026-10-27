@@ -6,7 +6,7 @@
         </title>
     </head>
     <body>
-        <h1>Listing Creation</h1>
+        <h1>{{ title|default:"Create a new listing" }}</h1>
         <form method="post">
             {% csrf_token %}
             {{ form }}
