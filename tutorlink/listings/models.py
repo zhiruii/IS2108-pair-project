@@ -36,6 +36,7 @@ class Listing(models.Model):
     MODE_CHOICES = [
         ("IN_PERSON", "In person"),
         ("ONLINE", "Online"),
+        ("HYBRID", "Hybrid")
     ]
 
     STATUS_CHOICES = [

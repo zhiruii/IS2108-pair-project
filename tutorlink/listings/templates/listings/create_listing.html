@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Create a new listing
+        </title>
+    </head>
+    <body>
+        <h1>Listing Creation</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit">Submit</button>
+        </form>
+        <a href="{% url 'index' %}">Home</a>
+    </body>
+</html>
