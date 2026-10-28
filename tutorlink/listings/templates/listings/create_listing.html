@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Create a new listing
+        </title>
+    </head>
+    <body>
+        <h1>{{ title|default:"Create a new listing" }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit">Submit</button>
+        </form>
+        <a href="{% url 'tutor_listings_view' %}">Cancel</a>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Send Enrolment Request</title>
+    </head>
+    <body>
+        <h1>Send an Enrolment request!</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ listing }}
+            {{ form }}
+            <button type="submit">Submit</button>
+            <button>
+                <a href="{% url 'parent_listings_view' %}">Cancel</a>
+            </button>
+        </form>
+    </body>
+</html>

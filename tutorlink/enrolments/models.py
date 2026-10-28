@@ -6,13 +6,6 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from datetime import datetime, timedelta
 
-# models:
-# EnrolmentRequest (DONE)
-# Package (DONE)
-# Lesson (DONE)
-# RescheduleRequest (DONE)
-
-
 class EnrolmentRequest(models.Model):
 
     STATUS_CHOICES = [

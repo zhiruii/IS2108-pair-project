@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Requests</title>
+    </head>
+    <body>
+        <h1>Active Requests</h1>
+        <table border="1" style="width: 100%;">
+            <tr>
+                <th>Listing</th>
+                <th>Tutor</th>
+                <th>Child</th>
+                <th>Status</th>
+                <th>Sent date</th>
+                <th>Action</th>
+            </tr>
+            {% for r in active_requests %}
+            <tr>
+                <td>{{ r.listing }}</td>
+                <td>{{ r.listing.tutor.user }}</td>
+                <td>{{ r.child }}</td>
+                <td>{{ r.get_status_display }}</td>
+                <td>{{ r.created_at|date:"d M Y" }}</td>
+                <td>
+                    {% if r.status == "PENDING" %}
+                    <a href="{% url 'parent_withdraw_request_view' r.pk %}"
+                        <button type="submit">Withdraw</button>
+                    </a>
+                    {% elif r.status == "ACCEPTED" %}
+                    <a href="#">Payment</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">
+                    You have no current active requests.
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h1>Past Requests</h1>
+        <table border="1" style="width: 100%;">
+            <tr>
+                <th>Listing</th>
+                <th>Tutor</th>
+                <th>Child</th>
+                <th>Status</th>
+                <th>Sent date</th>
+            </tr>
+            {% for r in past_requests %}
+            <tr>
+                <td>{{ r.listing }}</td>
+                <td>{{ r.listing.tutor.user }}</td>
+                <td>{{ r.child }}</td>
+                <td>{{ r.get_status_display }}</td>
+                <td>{{ r.created_at|date:"d M Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">
+                    You have no past requests.
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="{% url 'parent_listings_view' %}">Back to listings</a>
+        <a href="{% url 'index' %}">Home</a>
+    </body>
+</html>

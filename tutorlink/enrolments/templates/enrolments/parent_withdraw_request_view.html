@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Withdraw Request?</title>
+</head>
+
+<body>
+    <h1>Withdraw request</h1>
+    {{ enrolment_request.listing.tutor.user }}: {{ enrolment_request.listing }} for {{ enrolment_request.child }}
+    <p>You won't be charged. The tutor will be notified that you've withdrawn.</p>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="withdraw_reason" placeholder="Reason (optional)"></textarea>
+        <button type="submit">Withdraw</button>
+        <a href="{% url 'parent_my_requests_view' %}">Cancel</a>
+    </form>
+</body>
+
+</html>
