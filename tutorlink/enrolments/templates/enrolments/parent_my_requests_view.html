@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Requests</title>
+    </head>
+    <body>
+        <h1>My Requests</h1>
+        <table border="1" style="width: 100%;">
+            <tr>
+                <th>Listing</th>
+                <th>Tutor</th>
+                <th>Child</th>
+                <th>Status</th>
+                <th>Sent date</th>
+            </tr>
+            {% for r in requests %}
+            <tr>
+                <td>{{ r.listing }}</td>
+                <td>{{ r.listing.tutor }}</td>
+                <td>{{ r.child }}</td>
+                <td>{{ r.status }}</td>
+                <td>{{ r.created_at|date:"d M Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">
+                    You have no current outgoing requests.
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="{% url 'parent_listings_view' %}">Back to listings</a>
+        <a href="{% url 'index' %}">Home</a>
+    </body>
+</html>

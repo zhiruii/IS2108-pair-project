@@ -8,7 +8,8 @@
 {% if user.role == 'PARENT' %}
 <a href="{% url 'parent_profile' %}">My profile</a>
 <a href="{% url 'child_list' %}">My children</a>
-<a href="{% url 'parent_listings_view' %}">View Listings</a>
+<a href="{% url 'parent_listings_view' %}">View listings</a>
+<a href="{% url 'parent_my_requests_view' %}">My requests</a>
 
 {% elif user.role == 'TUTOR' %}
 <a href="{% url 'tutor_profile' %}">My profile</a>

@@ -73,6 +73,9 @@ LEVEL_CHOICES = [
     ('JC2', 'JC 2'),
 ]
 
+
+        
+
 class Child(models.Model):
     parent = models.ForeignKey(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
