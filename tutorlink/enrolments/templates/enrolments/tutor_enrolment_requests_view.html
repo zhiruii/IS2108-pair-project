@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Requests</title>
+</head>
+
+<body>
+    <h1>Pending requests</h1>
+    <table border="1" style="width: 100%;">
+        <tr>
+            <th>Listing</th>
+            <th>Child level</th>
+            <th>Child parent</th>
+            <th>Requested date</th>
+            <th>Message</th>
+            <th>Sent</th>
+            <th>Action</th>
+        </tr>
+        {% for r in pending_requests %}
+        <tr>
+            <td>{{ r }}</td>
+            <td>{{ r.child.get_level_display }}</td>
+            <td>{{ r.child.parent }}</td>
+            <td>{{ r.start_date }}</td>
+            <td>{{ r.message|default:"-" }}</td>
+            <td>{{ r.created_at|date:"d M Y" }}</td>
+            <td>
+                <form method="post" action="{% url 'tutor_accept_request_view' r.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Accept this request?')">Accept</button>
+                </form>
+                <a href="{% url 'tutor_decline_request_view' r.pk %}">
+                    Decline
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">
+                You have no pending requests.
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{% url 'index' %}">Home</a>
+</body>
+
+</html>

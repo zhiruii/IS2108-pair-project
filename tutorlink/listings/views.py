@@ -18,8 +18,13 @@ def tutor_listings_view(request):
     if request.user.role != 'TUTOR':
         return redirect('index')
     profile = TutorProfile.objects.filter(user=request.user).first()
-    listings = profile.listings.all().order_by('weekday', 'start_time')
-    return render(request, 'listings/tutor_view_listings.html', {'listings' : listings})
+    if profile is None:
+        return redirect('tutor_profile_create')
+    all_listings = profile.listings.all().order_by('weekday', 'start_time')
+    open_listings = all_listings.filter(status="OPEN")
+    filled_listings = all_listings.filter(status="FILLED")
+    closed_listings = all_listings.filter(status="CLOSED")
+    return render(request, 'listings/tutor_view_listings.html', {'open_listings': open_listings, 'filled_listings': filled_listings, 'closed_listings': closed_listings})
 
 @login_required
 def create_listing_view(request):

@@ -14,6 +14,7 @@
 {% elif user.role == 'TUTOR' %}
 <a href="{% url 'tutor_profile' %}">My profile</a>
 <a href="{% url 'tutor_listings_view' %}">View Your Listings</a>
+<a href="{% url 'tutor_requests_view' %}">Your pending requests</a>
 
 {% elif user.role == 'STAFF' %}
 <p>placeholder</p>

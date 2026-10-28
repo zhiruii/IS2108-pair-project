@@ -1,43 +1,88 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Tutor Listings</title>
-    </head>
-    <body>
-        <h1>Your Listings</h1>
-        <a href="{% url 'index' %}">Home</a>
-        <table border="1" style="width: 100%;">
-            <tr>
-                <th>Listing</th>
-                <th>Rate</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-            {% for listing in listings %}
-            <tr>
-                <td>{{ listing }}</td>
-                <td>${{ listing.rate_per_hour}}/hr</td>
-                <td>{{ listing.get_status_display }}</td>
-                <td>
-                    <a href="{% url 'edit_listing_view' listing.pk %}">
+
+<head>
+    <title>Tutor Listings</title>
+</head>
+
+<body>
+    <h1>Your Open Listings</h1>
+    <a href="{% url 'index' %}">Home</a>
+    </br><a href="{% url 'create_listing_view' %}">Create New Listing</a>
+
+    <table border="1" style="width: 100%;">
+        <tr>
+            <th>Listing</th>
+            <th>Rate</th>
+            <th>Requests</th>
+            <th>Action</th>
+        </tr>
+        {% for listing in open_listings %}
+        <tr>
+            <td>{{ listing }}</td>
+            <td>${{ listing.rate_per_hour}}/hr</td>
+            <td>
+                <a href=#>No. pending</a></td>
+            <td>
+                <a href="{% url 'edit_listing_view' listing.pk %}">
                         Edit
-                    </a>
                     {% if listing.status == "OPEN" %}
                     <form method="post" action="{% url 'close_listing_view' listing.pk %}">
                         {% csrf_token %}
-                        <button type="submit">Close</button>
+                        <button type="submit" onclick="return confirm('Are you sure you want to close this listing?')">Close</button>
                     </form>
                     {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">
-                    You have no listings yet.
-                </td>
-            </tr>
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">
+                You have no open listings yet.
+            </td>
+        </tr>
         {% endfor %}
-        </table>
-        <a href="{% url 'create_listing_view' %}">Create New Listing</a>
-    </body>
+    </table>
+
+    <h1>Your Filled Listings</h1>
+    <table border="1" style="width: 100%;">
+        <tr>
+            <th>Listing</th>
+            <th>Rate</th>
+        </tr>
+        {% for listing in filled_listings %}
+        <tr>
+            <td>{{ listing }}</td>
+            <td>${{ listing.rate_per_hour}}/hr</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">
+                You have no filled listings yet.
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Your Closed Listings</h1>
+    <table border="1" style="width: 100%;">
+        <tr>
+            <th>Listing</th>
+            <th>Rate</th>
+        </tr>
+        {% for listing in closed_listings %}
+        <tr>
+            <td>{{ listing }}</td>
+            <td>${{ listing.rate_per_hour}}/hr</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">
+                You have no closed listings yet.
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
 </html>
