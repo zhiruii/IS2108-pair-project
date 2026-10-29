@@ -1,0 +1,10 @@
+<html>
+    <h1>Delete {{ target.email }}?</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+
+    <a href="{% url 'admin_user_list' %}">Cancel</a>
+</html>
