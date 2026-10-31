@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import AdminUserForm
+from django.contrib import messages
+from django.db.models import RestrictedError
 
 from accounts.models import User, Child
 
@@ -41,7 +43,7 @@ def user_edit_view(request, user_id):
     target = get_object_or_404(User, id=user_id)
 
     if request.method == 'POST':
-        # No 'instace=' means we create new row
+        # No 'instance=' means we create new row
         form = AdminUserForm(request.POST, instance=target)
 
         if form.is_valid():
@@ -55,3 +57,26 @@ def user_edit_view(request, user_id):
         form = AdminUserForm(instance=target)
 
     return render(request, 'adminpanel/user_edit.html', {'form': form, 'target': target})
+
+@login_required
+def user_delete_view(request, user_id):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    target = get_object_or_404(User, id=user_id)
+
+    if target == request.user:
+        messages.error(request, 'You cannot delete your own admin account')
+        return redirect('admin_user_list')
+
+    if request.method == 'POST':
+        try:
+            target.delete()
+            messages.success(request, f'Deleted {target.email}')
+
+        except RestrictedError:
+            messages.error(request, f'Cannot delete {target.email}, they have requests or bookings.')
+        
+        return redirect('admin_user_list')
+
+    return render(request, 'adminpanel/user_delete.html', {'target': target})
