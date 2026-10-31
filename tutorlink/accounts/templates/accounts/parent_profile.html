@@ -12,5 +12,4 @@
     <p>Date of birth: {{ user.date_of_birth }}</p>
     <p>Gender: {{ user.get_gender_display }}</p>
     <a href="{% url 'parent_profile_edit' %}">Edit profile</a>
-    <a href="{% url 'child_list' %}">My children</a>
 {% endblock %}

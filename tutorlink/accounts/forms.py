@@ -17,6 +17,12 @@ class SignupForm(UserCreationForm):
 
     def clean_email(self):
         return self.cleaned_data.get('email').strip().lower()
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].help_text = ""
+        self.fields['password2'].help_text = ""
+        
 
 # We extend the built-in AuthenticationForm to use email instead of username for login
 class EmailLoginForm(AuthenticationForm):

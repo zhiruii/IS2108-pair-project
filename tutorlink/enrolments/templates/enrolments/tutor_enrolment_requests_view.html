@@ -7,10 +7,10 @@
 {% endblock %}
 
 {% block content %}
-    <table border="1" style="width: 100%;">
+    <table>
         <tr>
             <th>Listing</th>
-            <th>Child level</th>
+            <th>Child name</th>
             <th>Child parent</th>
             <th>Requested date</th>
             <th>Message</th>
@@ -19,9 +19,9 @@
         </tr>
         {% for r in pending_requests %}
         <tr>
-            <td>{{ r }}</td>
-            <td>{{ r.child.get_level_display }}</td>
-            <td>{{ r.child.parent }}</td>
+            <td>{{ r.listing }}</td>
+            <td>{{ r.child }}</td>
+            <td>{{ r.child.parent.first_name }}</td>
             <td>{{ r.start_date }}</td>
             <td>{{ r.message|default:"-" }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
