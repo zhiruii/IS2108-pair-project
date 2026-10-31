@@ -1,0 +1,15 @@
+<html>
+    <h1>Rate {{ target.first_name }}</h1>
+    <p>For: {{ package }}</p>
+    {% for m in messages %}
+        <p>{{ m }}</p>
+    {% endfor %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Submit rating</button>
+    </form>
+
+    <a href="{% url 'index' %}">Cancel</a>
+</html>

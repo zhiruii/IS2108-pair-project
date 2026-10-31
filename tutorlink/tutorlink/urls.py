@@ -23,5 +23,6 @@ urlpatterns = [
     path('adminpanel/', include('adminpanel.urls')),
     path('listings/', include('listings.urls')),
     path('enrolments/', include('enrolments.urls')),
+    path('ratings/', include('ratings.urls')),
     path('payments/', include('payments.urls')),
 ]

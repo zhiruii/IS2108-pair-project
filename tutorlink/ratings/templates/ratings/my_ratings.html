@@ -1,0 +1,50 @@
+<html>
+    <h1>My ratings</h1>
+    <a href="{% url 'index' %}">Home</a>
+
+    {% for m in messages %}
+        <p>{{ m }}</p>
+    {% endfor %}
+
+    <h2>Ratings I received</h2>
+    {% if average %}
+        <p>Average: {{ average|floatformat:1 }} / 5</p>
+    {% endif %}
+    <table border="1">
+        <tr>
+            <th>From</th>
+            <th>Package</th>
+            <th>Stars</th>
+            <th>Date</th>
+        </tr>
+        {% for r in received %}
+        <tr>
+            <td>{{ r.rater.first_name }}</td>
+            <td>{{ r.package }}</td>
+            <td>{{ r.stars }}</td>
+            <td>{{ r.created_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No ratings yet</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Ratings I gave</h2>
+    <table border="1">
+        <tr>
+            <th>To</th>
+            <th>Package</th>
+            <th>Stars</th>
+            <th>Date</th></tr>
+        {% for r in given %}
+        <tr>
+            <td>{% if r.rated_tutor %}{{ r.rated_tutor.user.first_name }}{% else %}{{ r.rated_parent.first_name }}{% endif %}</td>
+            <td>{{ r.package }}</td>
+            <td>{{ r.stars }}</td>
+            <td>{{ r.created_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">You haven't rated anyone yet.</td></tr>
+        {% endfor %}
+    </table>
+</html>
