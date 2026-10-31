@@ -2,6 +2,10 @@
 <html lang="en">
 <p> Hello World! </p>
 
+{% for m in messages %}
+    <p>{{ m }}</p>
+{% endfor %}
+
 {% if user.is_authenticated %}
 <p>Logged in as {{ user.email }}</p>
 
