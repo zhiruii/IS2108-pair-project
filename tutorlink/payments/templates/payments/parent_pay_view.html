@@ -29,9 +29,8 @@ Payment page
     Total: ${{ total_price }}
 </p>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Pay now</button>
-    <a href="{% url 'parent_my_requests_view' %}" class="btn btn-outline">Cancel</a>
-</form>
+
+
+<a href="{% url 'parent_payment_view' req_to_pay.pk %}" class="btn">Pay now</a>
+<a href="{% url 'parent_my_requests_view' %}" class="btn btn-outline">Cancel</a>
 {% endblock %}

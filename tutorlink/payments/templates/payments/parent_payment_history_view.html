@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment History{% endblock %}
+
+{% block header %}
+Payment History
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>Date paid</th>
+        <th>Child</th>
+        <th>Listing</th>
+        <th>Tutor</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Receipt</th>
+    </tr>
+    {% for p in packages %}
+    <tr>
+        <td>{{ p.created_at|date:"d M Y" }}</td>
+        <td>{{ p.enrolment_request.child }}</td>
+        <td>{{ p.enrolment_request.listing }}</td>
+        <td>{{ p.enrolment_request.listing.tutor.user.first_name }}</td>
+        <td>${{ p.total_price }}</td>
+        <td>{{ p.get_status_display }}</td>
+        <td><a href="{% url 'payment_success_view' p.pk %}">View</a></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="7">You haven't made any payments yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

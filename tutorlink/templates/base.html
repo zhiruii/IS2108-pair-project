@@ -43,6 +43,7 @@
                         <li><a href="{% url 'parent_my_requests_view' %}">My requests</a></li>
                         <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
                         <li><a href="{% url 'my_disputes' %}">My disputes</a></li>
+                        <li><a href="{% url 'parent_payment_history_view' %}">My payment history</a></li>
 
                         {% elif user.role == 'TUTOR' %}
                         <li><a href="{% url 'tutor_profile' %}">My profile</a></li>

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}
+Payment Confirmation page
+{% endblock %}
+
+{% block header %}
+Payment page
+{% endblock %}
+
+{% block content %}
+<p class="total">
+    Total: ${{ total_price }}
+</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Pay</button>
+    <a href="{% url 'parent_my_requests_view' %}" class="btn btn-outline">Back</a>
+</form>
+{% endblock %}
