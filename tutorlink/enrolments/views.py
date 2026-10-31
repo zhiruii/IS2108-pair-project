@@ -73,9 +73,24 @@ def parent_withdraw_request_view(request, pk):
 @login_required
 def tutor_requests_view(request):
     if request.user.role != "TUTOR":
-        return redirect('index')
-    pending_requests = EnrolmentRequest.objects.filter(listing__tutor__user=request.user, status="PENDING").order_by("-created_at")
-    return render(request, "enrolments/tutor_enrolment_requests_view.html", {'pending_requests': pending_requests})    
+        return redirect("index")
+
+    pending_requests = EnrolmentRequest.objects.filter(
+        listing__tutor__user=request.user, status="PENDING"
+    ).order_by("-created_at")
+
+    # Only show one listing's requests when ?listing=<pk> is in the URL
+    selected_listing = None
+    listing_pk = request.GET.get("listing")
+    if listing_pk:
+        selected_listing = get_object_or_404(Listing, pk=listing_pk, tutor__user=request.user)
+        pending_requests = pending_requests.filter(listing=selected_listing)
+
+    return render(
+        request,
+        "enrolments/tutor_enrolment_requests_view.html",
+        {"pending_requests": pending_requests, "selected_listing": selected_listing},
+    )  
 
 @login_required
 def tutor_accept_request_view(request, pk):

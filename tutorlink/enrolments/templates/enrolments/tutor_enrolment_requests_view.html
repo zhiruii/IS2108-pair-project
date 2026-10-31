@@ -7,6 +7,9 @@
 {% endblock %}
 
 {% block content %}
+    {% if selected_listing %}
+        <p>Showing requests for <strong>{{ selected_listing }}</strong> · <a href="{% url 'tutor_requests_view' %}">Show all pending instead</a></p>
+    {% endif %}
     <table>
         <tr>
             <th>Listing</th>

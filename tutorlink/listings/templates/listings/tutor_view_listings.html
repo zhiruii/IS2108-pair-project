@@ -29,7 +29,17 @@
             <td>{{ listing }}</td>
             <td>${{ listing.rate_per_hour}}/hr</td>
             <td>
-                <a href=#>No. pending</a>
+                {% if listing.status == "OPEN" %}
+                    {% if listing.pending_count > 0 %}
+                        <a href="{% url 'tutor_requests_view' %}?listing={{listing.pk}}">{{ listing.pending_count }} pending</a>
+                    {% else %}
+                        No requests yet
+                    {% endif %}
+                {% elif listing.status == "RESERVED" %}
+                    Awaiting payment
+                {% else %}
+                    —
+                {% endif %}
             </td>
             <td>{{ listing.get_status_display }}</td>
             <td>

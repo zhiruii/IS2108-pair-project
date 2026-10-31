@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Tutor Earnings
+{% endblock %}
+
+{% block header %}
+Your Earnings
+{% endblock %}
+
+{% block content %}
+<div class="stats">
+    <div class="stat">
+        <span class="stat-label">Earned</span>
+        <span class="stat-number">${{ totals.earned|floatformat:2|default:"0.00" }}</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Upcoming</span>
+        <span class="stat-number">${{ pending_earnings.earned|floatformat:2|default:"0.00" }}</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Platform fees</span>
+        <span class="stat-number">${{ totals.commission|floatformat:2|default:"0.00" }}</span>
+    </div>
+</div>
+
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Subject</th>
+        <th>Child</th>
+        <th>Lesson price</th>
+        <th>Platform fees (5%)</th>
+        <th>Earned</th>
+    </tr>
+    {% for lesson in completed %}
+    <tr>
+        <td>{{ lesson.completed_at|date:"d D M Y"}}</td>
+        <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
+        <td>{{ lesson.package.enrolment_request.child }}</td>
+        <td>{{ lesson.price }}</td>
+        <td>${{ lesson.commission }}</td>
+        <td>${{ lesson.tutor_amount }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">
+            No completed lessons yet.
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

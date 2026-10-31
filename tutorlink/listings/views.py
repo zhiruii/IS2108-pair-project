@@ -3,7 +3,7 @@ from .models import Listing
 from accounts.models import TutorProfile, LEVEL_CHOICES
 from .forms import ListingForm
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from enrolments.utils import expire_overdue_requests
 
 
@@ -60,8 +60,13 @@ def tutor_listings_view(request):
     
     expire_overdue_requests()
 
-    listings = profile.listings.all().order_by("weekday", "start_time")
-
+    listings = profile.listings.all().annotate(
+        pending_count=Count(
+            "enrolment_requests",
+            filter=Q(enrolment_requests__status="PENDING"),
+        )
+    ).order_by("weekday", "start_time")
+    
     # Filter by status from the URL, e.g. ?status=OPEN
     status = request.GET.get("status")
     if status in ("OPEN", "FILLED", "CLOSED", "RESERVED"):
