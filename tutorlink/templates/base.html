@@ -51,6 +51,7 @@
                         <li><a href="{% url 'tutor_requests_view' %}">Your pending requests</a></li>
                         <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
                         <li><a href="{% url 'my_disputes' %}">My disputes</a></li>
+                        <li><a href="{% url 'tutor_earnings_view' %}">My earnings</a></li>
 
                         {% elif user.role == 'STAFF' %}
                         <li><a href="{% url 'admin_home' %}">Admin panel</a></li>

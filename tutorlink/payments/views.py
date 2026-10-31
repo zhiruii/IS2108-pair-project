@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Sum
 from enrolments.models import EnrolmentRequest
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -120,3 +121,29 @@ def payment_history_view(request):
         return redirect('index')
     packages = Package.objects.filter(enrolment_request__child__parent=request.user).order_by("-created_at")
     return render(request, "payments/parent_payment_history_view.html", {"packages": packages})
+
+@login_required
+def tutor_earnings_view(request):
+    if request.user.role != 'TUTOR':
+        return redirect('index')
+    
+    lessons = Lesson.objects.filter(package__enrolment_request__listing__tutor__user=request.user)
+    
+    completed = lessons.filter(status="COMPLETED").order_by("-completed_at")
+    upcoming = lessons.filter(status="SCHEDULED")
+    
+    totals = completed.aggregate(
+        earned=Sum("tutor_amount"),
+        commission=Sum("commission"),
+    )
+    
+    pending_earnings = upcoming.aggregate(
+        earned=Sum("tutor_amount"),
+        commission=Sum("commission")
+    )
+    
+    return render(request, "payments/tutor_earnings_view.html", 
+                  {'completed': completed,
+                   'totals': totals,
+                   'upcoming': upcoming,
+                   'pending_earnings': pending_earnings})
