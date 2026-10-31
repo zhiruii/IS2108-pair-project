@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from accounts.models import TutorProfile, Child
+from accounts.models import TutorProfile
 from enrolments.models import Package
 from django.core.exceptions import ValidationError
 
@@ -23,10 +23,10 @@ class Rating(models.Model):
         null=True,
         blank=True,
     )
-    # the child being rated
-    rated_child = models.ForeignKey(
-        Child,
-        on_delete=models.CASCADE,  # if child is deleted, all his ratings deleted too
+    # the parent being rated
+    rated_parent = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,  # if parent is deleted, all his ratings deleted too
         related_name="ratings_received",
         null=True,
         blank=True,
@@ -47,32 +47,33 @@ class Rating(models.Model):
                 condition=models.Q(stars__gte=1, stars__lte=5),
                 name="rating_stars_between_1_and_5",
             ),
-            # one rating per rater per package
+            # one rating per rater per package, one package at most 2 ratings that goes both ways
             models.UniqueConstraint(
                 fields=["rater", "package"],
                 name="rating_one_rating_per_rater_per_package",
             ),
-            # exactly one of rated_tutor / rated_child
+            # exactly one of rated_tutor / rated_parent
             models.CheckConstraint(
                 condition=(
-                    models.Q(rated_tutor__isnull=False, rated_child__isnull=True)
-                    | models.Q(rated_tutor__isnull=True, rated_child__isnull=False)
+                    models.Q(rated_tutor__isnull=False, rated_parent__isnull=True)
+                    | models.Q(rated_tutor__isnull=True, rated_parent__isnull=False)
                 ),
                 name="rating_exactly_one_target",
             ),
         ]
 
     def clean(self):
-        # rating is only allowed after the package has at least one completed lesson
+        # rating is only allowed after the package has no scheduled lessons left
         if self.package_id is not None:
-            if not self.package.lessons.filter(status="COMPLETED").exists():
+            lessons = self.package.lessons
+            if lessons.filter(status="SCHEDULED").exists():
                 raise ValidationError(
-                    "Rating is only allowed after the package has at least one completed lesson."
+                    "Rating is only allowed after the package has no scheduled lessons left."
                 )
 
     def __str__(self):
         if self.rated_tutor is not None:
             target = self.rated_tutor.user
         else:
-            target = self.rated_child.first_name
+            target = self.rated_parent
         return f"{self.stars}/5 rating from {self.rater} to {target} (Package #{self.package_id})"
