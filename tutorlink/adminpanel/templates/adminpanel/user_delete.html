@@ -1,10 +1,14 @@
-<html>
-    <h1>Delete {{ target.email }}?</h1>
+{% extends 'base.html' %}
 
+{% block header %}
+    Delete {{ target.email }}?
+{% endblock %}
+
+{% block content %}
     <form method="post">
         {% csrf_token %}
         <button type="submit">Delete</button>
     </form>
 
     <a href="{% url 'admin_user_list' %}">Cancel</a>
-</html>
+{% endblock %}

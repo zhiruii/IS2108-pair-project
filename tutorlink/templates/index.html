@@ -1,31 +1,15 @@
-<!doctype html>
-<html lang="en">
-<p> Hello World! </p>
+{% extends 'base.html' %}
 
-{% if user.is_authenticated %}
-<p>Logged in as {{ user.email }}</p>
+{% block header %}
+    Welcome{% if user.is_authenticated %}, {{ user.first_name|default:user.email }}{% endif %}!
+{% endblock %}
 
-{% if user.role == 'PARENT' %}
-<a href="{% url 'parent_profile' %}">My profile</a>
-<a href="{% url 'child_list' %}">My children</a>
-<a href="{% url 'parent_listings_view' %}">View listings</a>
-<a href="{% url 'parent_my_requests_view' %}">My requests</a>
-
-{% elif user.role == 'TUTOR' %}
-<a href="{% url 'tutor_profile' %}">My profile</a>
-<a href="{% url 'tutor_listings_view' %}">View Your Listings</a>
-<a href="{% url 'tutor_requests_view' %}">Your pending requests</a>
-
-{% elif user.role == 'STAFF' %}
-<p>placeholder</p>
-{% endif %}
-
-<form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit">Log out</button>
-</form>
-{% else %}
-<a href="{% url 'login' %}">Log in</a> | <a href="{% url 'signup' %}">Sign up</a>
-{% endif %}
-
-</html>
+{% block content %}
+    {% if user.is_authenticated %}
+        {% if user.role == 'STAFF' %}
+            <p>placeholder</p>
+        {% endif %}
+    {% else %}
+        <p>Please log in or sign up to get started.</p>
+    {% endif %}
+{% endblock %}

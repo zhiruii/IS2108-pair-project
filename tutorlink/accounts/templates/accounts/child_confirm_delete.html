@@ -1,8 +1,13 @@
-<html>
-    <h1>Delete {{ child.first_name }}?</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    Delete {{ child.first_name }}?
+{% endblock %}
+
+{% block content %}
     <form method="post">
         {% csrf_token %}
         <button type="submit">Yes, delete</button>
     </form>
     <a href="{% url 'child_list' %}">Cancel</a>
-</html>
+{% endblock %}

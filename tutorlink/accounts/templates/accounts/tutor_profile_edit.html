@@ -1,5 +1,10 @@
-<html>
-    <h1>Edit Profile</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    Edit Profile
+{% endblock %}
+
+{% block content %}
     <form method="post">
         {% csrf_token %}
         {{ user_form }}
@@ -7,4 +12,4 @@
         <button type="submit">Save</button>
     </form>
     <a href="{% url 'tutor_profile' %}">Cancel</a>
-</html>
+{% endblock %}

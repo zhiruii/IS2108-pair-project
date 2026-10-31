@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Decline Request?</title>
-    </head>
-    <body>
-        <h1>Decline Request</h1>
-        Listing: {{ enrolment_request.listing }} for {{ enrolment_request.child.parent }}'s child, {{ enrolment_request.child }} {{ enrolment_request.child.get_level_display }}
-        <form method="post">
-            {% csrf_token %}
-            <textarea name="decline_reason" placeholder="Reason (optional)"></textarea>
-            <button type="submit">Decline</button>
-            <a href="{% url 'tutor_requests_view' %}">Cancel</a>
-        </form>
-    </body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Decline Request?{% endblock %}
+
+{% block header %}
+    Decline Request
+{% endblock %}
+
+{% block content %}
+    Listing: {{ enrolment_request.listing }} for {{ enrolment_request.child.parent }}'s child, {{ enrolment_request.child }} {{ enrolment_request.child.get_level_display }}
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="decline_reason" placeholder="Reason (optional)"></textarea>
+        <button type="submit">Decline</button>
+        <a href="{% url 'tutor_requests_view' %}">Cancel</a>
+    </form>
+{% endblock %}

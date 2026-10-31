@@ -1,5 +1,10 @@
-<html>
-    <h1>My Children</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    My Children
+{% endblock %}
+
+{% block content %}
     {% for message in messages %}<p>{{ message }}</p>{% endfor %}
     <a href="{% url 'child_create' %}">Add a child</a>
     <ul>
@@ -15,4 +20,4 @@
     {% endfor %}
     </ul>
     <a href="{% url 'parent_profile' %}">Back to My Profile</a>
-</html>
+{% endblock %}

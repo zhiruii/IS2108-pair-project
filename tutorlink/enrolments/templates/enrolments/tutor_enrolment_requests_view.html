@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>Your Requests</title>
-</head>
+{% block title %}Your Requests{% endblock %}
 
-<body>
-    <h1>Pending requests</h1>
+{% block header %}
+    Pending requests
+{% endblock %}
+
+{% block content %}
     <table border="1" style="width: 100%;">
         <tr>
             <th>Listing</th>
@@ -43,7 +43,4 @@
         </tr>
         {% endfor %}
     </table>
-    <a href="{% url 'index' %}">Home</a>
-</body>
-
-</html>
+{% endblock %}

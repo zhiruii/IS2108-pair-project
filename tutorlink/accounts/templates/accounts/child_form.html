@@ -1,9 +1,14 @@
-<html>
-    <h1>Child</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    Child
+{% endblock %}
+
+{% block content %}
     <form method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit">Save</button>
     </form>
     <a href="{% url 'child_list' %}">Back</a>
-</html>
+{% endblock %}

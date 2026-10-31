@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {% block title %}tutorlink{% endblock %}
+        </title>
+        <style>
+            .layout {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .layout td {
+                vertical-align: top;
+                padding: 8px 16px;
+            }
+            .navbar {
+                width: 200px;
+            }
+            .navbar ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .navbar li {
+                margin-bottom: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <table class="layout">
+
+            <tr>
+                <td colspan="2">
+                    <h1>
+                        {% block header %}
+                        {% endblock %}
+                    </h1>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="navbar">
+                    <nav>
+                        <h3>Menu</h3>
+                        <ul>
+                            {% if user.is_authenticated and request.resolver_match.url_name != 'index' %}
+                                <li><a href="{% url 'index' %}">Home</a></li>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                                {% if user.role == 'PARENT' %}
+                                    <li><a href="{% url 'parent_profile' %}">My profile</a></li>
+                                    <li><a href="{% url 'child_list' %}">My children</a></li>
+                                    <li><a href="{% url 'parent_listings_view' %}">View listings</a></li>
+                                    <li><a href="{% url 'parent_my_requests_view' %}">My requests</a></li>
+                                {% elif user.role == 'TUTOR' %}
+                                    <li><a href="{% url 'tutor_profile' %}">My profile</a></li>
+                                    <li><a href="{% url 'tutor_listings_view' %}">View your listings</a></li>
+                                    <li><a href="{% url 'tutor_requests_view' %}">Your pending requests</a></li>
+                                {% elif user.role == 'STAFF' %}
+                                    <li><a href="{% url 'admin_home' %}">Admin panel</a></li>
+                                    <li><a href="{% url 'admin_user_list' %}">Users</a></li>
+                                {% endif %}
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit">Log out</button>
+                                    </form>
+                                </li>
+                            {% else %}
+                                <li><a href="{% url 'login' %}">Log in</a></li>
+                                <li><a href="{% url 'signup' %}">Sign up</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </td>
+                <td class="content">
+                    <main>
+                        {% block content %}
+                        {% endblock %}
+                    </main>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <footer>
+                        <hr/>Footer
+                    </footer>
+                </td>
+            </tr>
+
+        </table>
+
+    </body>
+
+</html>
