@@ -6,13 +6,14 @@ from .models import EnrolmentRequest
 from .forms import EnrolmentRequestForm
 from django.utils import timezone
 from datetime import timedelta
-
+from .utils import expire_overdue_requests
 
 # Create your views here.
 @login_required
 def send_enrolment_request_view(request, pk):
     if request.user.role != "PARENT":
         return redirect("index")
+    expire_overdue_requests()
     listing = get_object_or_404(Listing, pk=pk, status="OPEN")
     children = Child.objects.filter(parent=request.user)
     if not children.exists():
@@ -40,6 +41,7 @@ def send_enrolment_request_view(request, pk):
 def parent_my_requests_view(request):
     if request.user.role != "PARENT":
         return redirect("index")
+    expire_overdue_requests()
     all_requests = EnrolmentRequest.objects.filter(child__parent=request.user).order_by(
         "-created_at"
     )

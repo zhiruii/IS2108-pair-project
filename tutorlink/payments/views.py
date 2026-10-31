@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from .forms import PaymentForm
 from enrolments.models import Lesson, Package
+from enrolments.utils import expire_overdue_requests
 
 def get_price_summary(req_to_pay):
     lesson_dates = [req_to_pay.start_date + timedelta(days=7 * i) for i in range(4)]
@@ -33,6 +34,8 @@ def parent_pay_view(request, pk):
     if request.user.role != "PARENT":
         return redirect("index")
     
+    expire_overdue_requests()
+
     req_to_pay = get_object_or_404(
         EnrolmentRequest, pk=pk, status="ACCEPTED", child__parent=request.user
     )
@@ -54,6 +57,9 @@ def parent_pay_view(request, pk):
 def parent_payment_view(request, pk):
     if request.user.role != 'PARENT':
         return redirect('index')
+    
+    expire_overdue_requests()
+
     req_to_pay = get_object_or_404(
         EnrolmentRequest, pk=pk, status="ACCEPTED", child__parent=request.user
     )
