@@ -84,6 +84,8 @@ def tutor_accept_request_view(request, pk):
     )    
     if request.method == 'POST':
         enrolment_request.status = "ACCEPTED"
+        enrolment_request.listing.status = "RESERVED"
+        enrolment_request.listing.save()
         enrolment_request.decided_at = timezone.now()
         enrolment_request.pay_by = timezone.now() + timedelta(hours=48)
         enrolment_request.save()

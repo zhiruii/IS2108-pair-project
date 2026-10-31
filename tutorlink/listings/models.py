@@ -41,6 +41,7 @@ class Listing(models.Model):
 
     STATUS_CHOICES = [
         ("OPEN", "Open"),
+        ("RESERVED", "Reserved"),
         ("FILLED", "Filled"),
         ("CLOSED", "Closed"),
     ]
@@ -56,7 +57,7 @@ class Listing(models.Model):
     end_time = models.TimeField()
     mode = models.CharField(max_length=9, choices=MODE_CHOICES)
     rate_per_hour = models.DecimalField(max_digits=5, decimal_places=2)
-    status = models.CharField(max_length=6, choices=STATUS_CHOICES, default="OPEN")
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default="OPEN")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

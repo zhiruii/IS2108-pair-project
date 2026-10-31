@@ -1,8 +1,13 @@
-<html>
-    <h1>Log in</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    Log in
+{% endblock %}
+
+{% block content %}
     <form method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit">Log in</button>
     </form>
-</html>
+{% endblock %}

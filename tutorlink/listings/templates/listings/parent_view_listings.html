@@ -1,26 +1,61 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>
-        Available Listings
-    </title>
-</head>
+{% block title %}Available Listings{% endblock %}
 
-<body>
-    <h1>Available listings</h1>
-    <a href="{% url 'index' %}">Home</a>
-    <table border="1" style="width: 100%;">
+{% block header %}
+    Available listings
+{% endblock %}
+
+{% block content %}
+    <form method="get" class="filters">
+        <select name="subject">
+            <option value="">Any subject</option>
+            {% for value, label in subject_choices %}
+                <option value="{{ value }}" {% if selected.subject == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="level">
+            <option value="">Any level</option>
+            {% for value, label in level_choices %}
+                <option value="{{ value }}" {% if selected.level == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="weekday">
+            <option value="">Any day</option>
+            {% for value, label in weekday_choices %}
+                <option value="{{ value }}" {% if selected.weekday == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="mode">
+            <option value="">Any mode</option>
+            {% for value, label in mode_choices %}
+                <option value="{{ value }}" {% if selected.mode == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Max rate: $<span id="rate-value">{{ selected.max_rate|default:100 }}</span>/hr</label>
+        <input type="range" name="max_rate" min="10" max="100" step="5" value="{{ selected.max_rate|default:100 }}"
+            oninput="document.getElementById('rate-value').textContent = this.value">
+
+        <button type="submit">Filter</button>
+        <a href="{% url 'parent_listings_view' %}">Clear</a>
+    </form>
+    <table>
         <tr>
             <th>Listing</th>
+            <th>Rate</th>
             <th>Tutor</th>
             <th>Rating</th>
             <th>Action</th>
         </tr>
         {% for listing in listings %}
         <tr>
-            <td>{{ listing }} : ${{ listing.rate_per_hour }}/hr</td>
-            <td>{{ listing.tutor.user }}</td>
+            <td>{{ listing }} </td>
+            <td>${{ listing.rate_per_hour }}/hr</td>
+            <td>{{ listing.tutor.user.first_name }}</td>
             <td>Rating to go here</td>
             <td>
                 <a href="{% url 'send_enrolment_request_view' listing.pk %}">
@@ -30,12 +65,10 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="4">
+            <td colspan="5">
                 There are no available listings.
             </td>
         </tr>
         {% endfor %}
     </table>
-</body>
-
-</html>
+{% endblock %}
