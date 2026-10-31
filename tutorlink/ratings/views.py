@@ -46,13 +46,15 @@ def rate_package_view(request, package_id):
 def my_ratings_view(request):
     if request.user.role == 'TUTOR':
         received = Rating.objects.filter(rated_tutor__user=request.user)
+        my_packages = Package.objects.filter(enrolment_request__listing__tutor__user=request.user)
     elif request.user.role == 'PARENT':
         received = Rating.objects.filter(rated_parent=request.user)
+        my_packages = Package.objects.filter(enrolment_request__child__parent=request.user)
     else:
         return redirect('index')
-
+    to_rate = my_packages.exclude(lessons__status='SCHEDULED').exclude(ratings__rater=request.user)
     given = Rating.objects.filter(rater=request.user).order_by('-created_at')
     received = received.order_by('-created_at')
     average = received.aggregate(Avg('stars'))['stars__avg']
 
-    return render(request, 'ratings/my_ratings.html', {'given': given, 'received': received, 'average': average})
+    return render(request, 'ratings/my_ratings.html', {'given': given, 'received': received, 'average': average, 'to_rate': to_rate})

@@ -41,10 +41,14 @@
                         <li><a href="{% url 'child_list' %}">My children</a></li>
                         <li><a href="{% url 'parent_listings_view' %}">View listings</a></li>
                         <li><a href="{% url 'parent_my_requests_view' %}">My requests</a></li>
+                        <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
+
                         {% elif user.role == 'TUTOR' %}
                         <li><a href="{% url 'tutor_profile' %}">My profile</a></li>
                         <li><a href="{% url 'tutor_listings_view' %}">View your listings</a></li>
                         <li><a href="{% url 'tutor_requests_view' %}">Your pending requests</a></li>
+                        <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
+
                         {% elif user.role == 'STAFF' %}
                         <li><a href="{% url 'admin_home' %}">Admin panel</a></li>
                         <li><a href="{% url 'admin_user_list' %}">Users</a></li>
@@ -64,6 +68,10 @@
             </td>
             <td class="content">
                 <main>
+                    {% for m in messages %}
+                        <p>{{ m }}</p>
+                    {% endfor %}
+
                     {% block content %}
                     {% endblock %}
                 </main>

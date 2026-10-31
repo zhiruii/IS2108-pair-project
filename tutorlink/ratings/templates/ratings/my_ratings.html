@@ -1,50 +1,88 @@
-<html>
-    <h1>My ratings</h1>
-    <a href="{% url 'index' %}">Home</a>
+{% extends 'base.html' %}
 
-    {% for m in messages %}
-        <p>{{ m }}</p>
-    {% endfor %}
+{% block title %}My ratings{% endblock %}
+
+{% block header %}
+    My Ratings
+{% endblock %}
+
+{% block content %}
+    <h2>Waiting for your rating</h2>
+    <table>
+        <tr>
+            <th>Listing</th>
+            <th>With</th>
+            <th>Child</th>
+            <th>Action</th>
+        </tr>
+        {% for p in to_rate %}
+        <tr>
+            <td>{{ p.enrolment_request.listing }}</td>
+            <td>
+                {% if user.role == 'TUTOR' %}{{ p.enrolment_request.child.parent.first_name }}{% else %}{{ p.enrolment_request.listing.tutor.user.first_name }}{% endif %}
+            </td>
+            <td>{{ p.enrolment_request.child.first_name }}</td>
+            <td><a href="{% url 'rate_package' p.id %}">Rate</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nothing to rate right now.</td>
+        </tr>
+        {% endfor %}
+    </table>
 
     <h2>Ratings I received</h2>
     {% if average %}
         <p>Average: {{ average|floatformat:1 }} / 5</p>
     {% endif %}
-    <table border="1">
+    <table>
         <tr>
             <th>From</th>
-            <th>Package</th>
+            <th>Listing</th>
+            <th>Child</th>
             <th>Stars</th>
             <th>Date</th>
         </tr>
         {% for r in received %}
         <tr>
             <td>{{ r.rater.first_name }}</td>
-            <td>{{ r.package }}</td>
-            <td>{{ r.stars }}</td>
+            <td>{{ r.package.enrolment_request.listing }}</td>
+            <td>{{ r.package.enrolment_request.child.first_name }}</td>
+            <td>{{ r.stars }} / 5</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="4">No ratings yet</td></tr>
+        <tr>
+            <td colspan="5">You have no ratings yet.</td>
+        </tr>
         {% endfor %}
     </table>
 
     <h2>Ratings I gave</h2>
-    <table border="1">
+    <table>
         <tr>
             <th>To</th>
-            <th>Package</th>
+            <th>Listing</th>
+            <th>Child</th>
             <th>Stars</th>
-            <th>Date</th></tr>
+            <th>Date</th>
+        </tr>
         {% for r in given %}
         <tr>
-            <td>{% if r.rated_tutor %}{{ r.rated_tutor.user.first_name }}{% else %}{{ r.rated_parent.first_name }}{% endif %}</td>
-            <td>{{ r.package }}</td>
-            <td>{{ r.stars }}</td>
+            <td>
+                {% if r.rated_tutor %}{{ r.rated_tutor.user.first_name }}{% else %}{{ r.rated_parent.first_name }}{% endif %}
+            </td>
+            <td>{{ r.package.enrolment_request.listing }}</td>
+            <td>{{ r.package.enrolment_request.child.first_name }}</td>
+            <td>{{ r.stars }} / 5</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="4">You haven't rated anyone yet.</td></tr>
+        <tr>
+            <td colspan="5">You haven't rated anyone yet.</td>
+        </tr>
         {% endfor %}
     </table>
-</html>
+{% endblock %}
+
+

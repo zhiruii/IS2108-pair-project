@@ -1,15 +1,18 @@
-<html>
-    <h1>Rate {{ target.first_name }}</h1>
+{% extends 'base.html' %}
+
+{% block title %}Rate {{ target.first_name }}{% endblock %}
+
+{% block header %}
+    Rate {{ target.first_name }}
+{% endblock %}
+
+{% block content %}
     <p>For: {{ package }}</p>
-    {% for m in messages %}
-        <p>{{ m }}</p>
-    {% endfor %}
 
     <form method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit">Submit rating</button>
+        <a href="{% url 'my_ratings' %}" class="btn btn-outline">Cancel</a>
     </form>
-
-    <a href="{% url 'index' %}">Cancel</a>
-</html>
+{% endblock %}

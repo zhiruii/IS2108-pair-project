@@ -93,11 +93,11 @@ class Command(BaseCommand):
             defaults={'level': 'P4', 'start_time': time(16, 0), 'end_time': time(17, 0),
                       'mode': 'ONLINE', 'rate_per_hour': 50, 'status': 'FILLED'},
         )
-        #Status is closed for now, pls rename when u update janelle
+
         accepted_listing_to_be_paid, _ = Listing.objects.get_or_create(
             tutor=tutor, subject='E_MATH', weekday=2,
             defaults={'level': 'S2', 'start_time': time(17, 0), 'end_time': time(18, 0),
-                      'mode': 'ONLINE', 'rate_per_hour': 60, 'status': 'CLOSED'},
+                      'mode': 'ONLINE', 'rate_per_hour': 60, 'status': 'RESERVED'},
         )
         pending_listing, _ = Listing.objects.get_or_create(
             tutor=tutor, subject='SCIENCE', weekday=4,
