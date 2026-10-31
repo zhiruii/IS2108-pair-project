@@ -52,6 +52,8 @@
                         {% elif user.role == 'STAFF' %}
                         <li><a href="{% url 'admin_home' %}">Admin panel</a></li>
                         <li><a href="{% url 'admin_user_list' %}">Users</a></li>
+                        <li><a href="{% url 'admin_rating_list' %}">Ratings</a></li>
+
                         {% endif %}
                         <li>
                             <form method="post" action="{% url 'logout' %}">

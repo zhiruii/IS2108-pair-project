@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.db.models import RestrictedError
 
 from accounts.models import User, Child
+from ratings.models import Rating
+
 
 
 @login_required
@@ -80,3 +82,33 @@ def user_delete_view(request, user_id):
         return redirect('admin_user_list')
 
     return render(request, 'adminpanel/user_delete.html', {'target': target})
+
+@login_required
+def rating_list_view(request):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    ratings = Rating.objects.all().order_by('-created_at')
+
+    role = request.GET.get('role')
+    if role == 'TUTOR':
+        ratings = ratings.filter(rated_tutor__isnull=False)
+    elif role == 'PARENT':
+        ratings = ratings.filter(rated_parent__isnull=False)
+
+    return render(request, 'adminpanel/rating_list.html', {'ratings': ratings, 'role': role})
+
+
+@login_required
+def rating_delete_view(request, rating_id):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    rating = get_object_or_404(Rating, id=rating_id)
+
+    if request.method == 'POST':
+        rating.delete()
+        messages.success(request, 'Rating deleted')
+        return redirect('admin_rating_list')
+
+    return render(request, 'adminpanel/rating_delete.html', {'rating': rating})

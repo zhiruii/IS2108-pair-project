@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete rating{% endblock %}
+
+{% block header %}
+    Delete this rating?
+{% endblock %}
+
+{% block content %}
+    <p>{{ rating }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'admin_rating_list' %}">Cancel</a>
+    </form>
+{% endblock %}
