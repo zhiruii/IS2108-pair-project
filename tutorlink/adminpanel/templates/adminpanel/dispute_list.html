@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Disputes{% endblock %}
+
+{% block header %}
+    Disputes
+{% endblock %}
+
+{% block content %}
+    <p>
+        Show:
+        <a href="{% url 'admin_dispute_list' %}">All</a> |
+        <a href="?status=OPEN">Open</a> |
+        <a href="?status=UPHELD">Upheld</a> |
+        <a href="?status=REJECTED">Rejected</a>
+    </p>
+
+    <table>
+        <tr>
+            <th>Raised by</th>
+            <th>Rating</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        {% for d in disputes %}
+        <tr>
+            <td>{{ d.raised_by.email }}</td>
+            <td>{{ d.rating_summary }}</td>
+            <td>{{ d.reason }}</td>
+            <td>{{ d.get_status_display }}</td>
+            <td>{{ d.created_at|date:"d M Y" }}</td>
+            <td>
+                {% if d.status == 'OPEN' %}
+                <a href="{% url 'admin_dispute_resolve' d.id %}">Review</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No disputes.</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Rating
+from .models import Rating, Dispute
 
 
 class RatingForm(forms.ModelForm):
@@ -12,3 +12,10 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ['stars']
+
+class DisputeForm(forms.ModelForm):
+    reason = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'rows': 4}))
+
+    class Meta:
+        model = Dispute
+        fields = ['reason']

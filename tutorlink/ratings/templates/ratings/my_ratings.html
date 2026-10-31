@@ -42,6 +42,7 @@
             <th>Child</th>
             <th>Stars</th>
             <th>Date</th>
+            <th>Actions</th>
         </tr>
         {% for r in received %}
         <tr>
@@ -50,10 +51,18 @@
             <td>{{ r.package.enrolment_request.child.first_name }}</td>
             <td>{{ r.stars }} / 5</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
+            <td>
+                {% if r.dispute %}
+                    Disputed ({{ r.dispute.get_status_display }})
+                {% else %}
+                    <a href="{% url 'dispute_rating' r.id %}">Dispute</a>
+                {% endif %}
+            </td>
+
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">You have no ratings yet.</td>
+            <td colspan="6">You have no ratings yet.</td>
         </tr>
         {% endfor %}
     </table>

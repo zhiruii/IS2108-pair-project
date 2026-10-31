@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Dispute a rating{% endblock %}
+
+{% block header %}
+    Dispute this rating
+{% endblock %}
+
+{% block content %}
+    <p>{{ rating }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Send dispute</button>
+        <a href="{% url 'my_ratings' %}" class="btn btn-outline">Cancel</a>
+    </form>
+{% endblock %}

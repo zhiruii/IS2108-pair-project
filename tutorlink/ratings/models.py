@@ -77,3 +77,33 @@ class Rating(models.Model):
         else:
             target = self.rated_parent
         return f"{self.stars}/5 rating from {self.rater} to {target} (Package #{self.package_id})"
+
+class Dispute(models.Model):
+    STATUS_CHOICES = [
+        ("OPEN", "Open"),
+        ("UPHELD", "Upheld"),
+        ("REJECTED", "Rejected"),
+    ]
+
+    # one dispute per rating, if the rating is deleted the dispute stays as a record
+    rating = models.OneToOneField(
+        Rating, on_delete=models.SET_NULL, null=True, blank=True, related_name="dispute"
+    )
+    # text copy of the rating, so the record still makes sense after it is deleted
+    rating_summary = models.CharField(max_length=255, blank=True)
+    # the person who was rated and disagrees
+    raised_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="disputes_raised"
+    )
+    reason = models.TextField()
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default="OPEN")
+    admin_note = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="disputes_resolved",
+    )
+
+    def __str__(self):
+        return f"Dispute #{self.pk} by {self.raised_by} [{self.get_status_display()}]"
