@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% for m in messages %}
+    <p>{{ m }}</p>
+{% endfor %}
+
 {% block header %}
     Welcome{% if user.is_authenticated %}, {{ user.first_name|default:user.email }}{% endif %}!
 {% endblock %}

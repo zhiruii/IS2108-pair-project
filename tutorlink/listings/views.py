@@ -54,7 +54,7 @@ def tutor_listings_view(request):
 
     # Filter by status from the URL, e.g. ?status=OPEN
     status = request.GET.get("status")
-    if status in ("OPEN", "FILLED", "CLOSED"):
+    if status in ("OPEN", "FILLED", "CLOSED", "RESERVED"):
         listings = listings.filter(status=status)
 
     return render(

@@ -28,7 +28,7 @@
                 {% if r.status == "PENDING" %}
                 <a href="{% url 'parent_withdraw_request_view' r.pk %}">Withdraw</a>
                 {% elif r.status == "ACCEPTED" %}
-                <a href="#">Payment</a>
+                <a href="{% url 'parent_pay_view' r.pk %}">Payment</a>
                 {% endif %}
             </td>
         </tr>

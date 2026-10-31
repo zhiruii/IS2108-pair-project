@@ -9,6 +9,6 @@
         {% csrf_token %}
         {{ form }}
         <button type="submit">Save</button>
+        <a href="{% url 'child_list' %}" class="btn btn-outline">Cancel</a>
     </form>
-    <a href="{% url 'child_list' %}">Cancel</a>
 {% endblock %}
