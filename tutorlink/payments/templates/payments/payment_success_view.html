@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Receipt{% endblock %}
+
+{% block header %}
+Receipt
+{% endblock %}
+
+{% block content %}
+<p>Child: {{ package.enrolment_request.child }}</p>
+<p>Listing: {{ package.enrolment_request.listing }}</p>
+<p>Paid on: {{ package.created_at|date:"d M Y" }}</p>
+
+<p>Lessons:</p>
+<ul>
+    {% for lesson in package.lessons.all %}
+    <li>{{ lesson.date|date:"D d M Y" }}, {{ lesson.start_time|time:"H:i" }}–{{ lesson.end_time|time:"H:i" }}</li>
+    {% endfor %}
+</ul>
+
+<p class="total">Total: ${{ package.total_price }}</p>
+
+<a href="{% url 'parent_payment_history_view' %}" class="btn">Payment history</a>
+<a href="{% url 'parent_my_requests_view' %}" class="btn btn-outline">My requests</a>
+{% endblock %}

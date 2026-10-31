@@ -4,7 +4,7 @@ from accounts.models import TutorProfile, LEVEL_CHOICES
 from .forms import ListingForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count
-
+from enrolments.utils import expire_overdue_requests
 
 
 # Create your views here.
@@ -13,6 +13,8 @@ def parent_listings_view(request):
     if request.user.role != "PARENT":
         return redirect("index")
     
+    expire_overdue_requests()
+
     # filtering logic
     listings = Listing.objects.filter(status="OPEN").annotate(
         avg_rating=Avg('tutor__ratings_received__stars'),
@@ -55,6 +57,8 @@ def tutor_listings_view(request):
     profile = TutorProfile.objects.filter(user=request.user).first()
     if profile is None:
         return redirect("tutor_profile_create")
+    
+    expire_overdue_requests()
 
     listings = profile.listings.all().order_by("weekday", "start_time")
 
