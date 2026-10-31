@@ -1,8 +1,13 @@
-<html>
-    <h1>Tutor Form</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    Tutor Form
+{% endblock %}
+
+{% block content %}
     <form method="post">
         {% csrf_token %}
         {{ form }}
-        <button type="submit"> Submit </button>
+        <button type="submit">Submit</button>
     </form>
-</html>
+{% endblock %}

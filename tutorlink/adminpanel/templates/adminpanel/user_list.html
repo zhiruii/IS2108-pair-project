@@ -1,11 +1,14 @@
-<html>
-    <h1>Users</h1>
-    <a href="{% url 'admin_home' %}">Back</a>
+{% extends 'base.html' %}
+
+{% block header %}
+    Users
+{% endblock %}
+
+{% block content %}
 
     {% for m in messages %}
     <p>{{ m }}</p>
     {% endfor %}
-
 
     <p>
         Show:
@@ -36,4 +39,4 @@
         <tr><td colspan="5">No users.</td></tr>
         {% endfor %}
     </table>
-</html>
+{% endblock %}

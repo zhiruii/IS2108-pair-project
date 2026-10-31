@@ -1,5 +1,10 @@
-<html>
-    <h1>Edit {{ target.email }}</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    Edit {{ target.email }}
+{% endblock %}
+
+{% block content %}
     <p>Role: {{ target.get_role_display }}</p>
 
     <form method="post">
@@ -9,4 +14,4 @@
     </form>
 
     <a href="{% url 'admin_user_list' %}">Cancel</a>
-</html>
+{% endblock %}

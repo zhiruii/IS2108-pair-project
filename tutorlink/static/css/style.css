@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+
+/* ---------- Colours (from the logo) ---------- */
+:root {
+    --green-dark: #2f6b45;
+    --green-leaf: #7fb98f;
+    --green-pale: #e3efe5;
+    --ink: #1f3d2b;
+    --muted: #6b7a70;
+    --card: rgba(255, 255, 255, 0.75);
+    --line: #d6e4d9;
+    --danger: #b5523b;
+    --radius: 16px;
+}
+
+/* ---------- Page ---------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: linear-gradient(160deg, var(--green-pale) 0%, #f7fbf8 50%, #ffffff 100%);
+    background-attachment: fixed;
+}
+
+h1, h2, h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 8px 0;
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin: 28px 0 12px;
+}
+
+a {
+    color: var(--green-dark);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.total {
+    font-size: medium;
+    font-weight: bold;
+}
+
+/* ---------- Layout table (sidebar + content) ---------- */
+.layout {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 24px;
+}
+
+.layout > tbody > tr > td {
+    vertical-align: top;
+    padding: 0;
+}
+
+/* ---------- Sidebar ---------- */
+.navbar {
+    width: 230px;
+}
+
+.navbar nav {
+    position: sticky;
+    top: 24px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    backdrop-filter: blur(6px);
+}
+
+.navbar h3 {
+    font-size: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 12px;
+}
+
+.navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar li {
+    margin-bottom: 4px;
+}
+
+.navbar li a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: var(--ink);
+}
+
+.navbar li a:hover {
+    background: var(--green-pale);
+    text-decoration: none;
+}
+
+.navbar li form {
+    margin-top: 12px;
+}
+
+.navbar li button {
+    width: 100%;
+}
+
+/* Logo + name */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.brand:hover {
+    text-decoration: none;
+}
+
+.brand em {
+    color: var(--green-dark);
+    font-weight: 400;
+}
+
+/* ---------- Main content card ---------- */
+.content main {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 32px;
+    min-height: 60vh;
+    backdrop-filter: blur(6px);
+}
+
+/* ---------- Tables inside pages ---------- */
+main table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+
+main th,
+main td {
+    border: none;
+    border-bottom: 1px solid var(--line);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+main th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+main tr:hover td {
+    background: rgba(227, 239, 229, 0.5);
+}
+
+main td form {
+    display: inline;
+    margin: 0;
+}
+
+/* ---------- Buttons (pill shape) ---------- */
+button,
+input[type="submit"],
+.btn {
+    display: inline-block;
+    font: inherit;
+    font-weight: 500;
+    padding: 7px 18px;
+    border: none;
+    border-radius: 999px;
+    background: var(--green-dark);
+    color: white;
+    cursor: pointer;
+}
+
+button:hover,
+input[type="submit"]:hover,
+.btn:hover {
+    background: var(--ink);
+    text-decoration: none;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--green-dark);
+    border: 1px solid var(--green-dark);
+}
+
+.btn-outline:hover {
+    background: var(--green-pale);
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+
+/* ---------- Forms ---------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+    font: inherit;
+    width: 100%;
+    max-width: 420px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: white;
+    color: var(--ink);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--green-leaf);
+    box-shadow: 0 0 0 3px var(--green-pale);
+}
+
+label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+form > div {
+    margin: 0 0 16px;
+}
+
+.errorlist {
+    color: var(--danger);
+    list-style: none;
+    padding: 0;
+    margin: 4px 0;
+    font-size: 0.85rem;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filters select {
+    width: auto;
+    padding: 2px;
+}
+
+.filters input[type="range"] {
+    accent-color: var(--green-dark);
+}

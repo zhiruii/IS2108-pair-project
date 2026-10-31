@@ -1,5 +1,10 @@
-<html>
-    <h1>My Profile</h1>
+{% extends 'base.html' %}
+
+{% block header %}
+    My Profile
+{% endblock %}
+
+{% block content %}
     <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
     <p>Email: {{ user.email }}</p>
     <p>Phone: {{ user.phone }}</p>
@@ -12,5 +17,4 @@
     <p>Years of experience: {{ profile.years_experience }}</p>
     <p>Teaching mode: {{ profile.get_teaching_mode_display }}</p>
     <a href="{% url 'tutor_profile_edit' %}">Edit profile</a>
-    <a href="{% url 'index' %}">Home</a>
-</html>
+{% endblock %}
