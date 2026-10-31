@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Review dispute{% endblock %}
+
+{% block header %}
+    Review dispute
+{% endblock %}
+
+{% block content %}
+    <p>Raised by: {{ dispute.raised_by.email }}</p>
+    <p>Rating: {{ dispute.rating_summary }}</p>
+    <p>Reason: {{ dispute.reason }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Resolve</button>
+        <a href="{% url 'admin_dispute_list' %}" class="btn btn-outline">Cancel</a>
+    </form>
+{% endblock %}

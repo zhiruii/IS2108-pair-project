@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import AdminUserForm
+from .forms import AdminUserForm, DisputeResolveForm
 from django.contrib import messages
 from django.db.models import RestrictedError
 
 from accounts.models import User, Child
+from ratings.models import Rating, Dispute
+from django.utils import timezone
+
 
 
 @login_required
@@ -80,3 +83,91 @@ def user_delete_view(request, user_id):
         return redirect('admin_user_list')
 
     return render(request, 'adminpanel/user_delete.html', {'target': target})
+
+@login_required
+def rating_list_view(request):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    ratings = Rating.objects.all().order_by('-created_at')
+
+    role = request.GET.get('role')
+    if role == 'TUTOR':
+        ratings = ratings.filter(rated_tutor__isnull=False)
+    elif role == 'PARENT':
+        ratings = ratings.filter(rated_parent__isnull=False)
+
+    return render(request, 'adminpanel/rating_list.html', {'ratings': ratings, 'role': role})
+
+
+@login_required
+def rating_delete_view(request, rating_id):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    rating = get_object_or_404(Rating, id=rating_id)
+
+    if request.method == 'POST':
+        dispute = Dispute.objects.filter(rating=rating, status='OPEN').first()
+        if dispute:
+            dispute.status = 'UPHELD'
+            dispute.admin_note = 'Rating removed by staff'
+            dispute.resolved_by = request.user
+            dispute.resolved_at = timezone.now()
+            dispute.save()
+
+        rating.delete()
+        messages.success(request, 'Rating deleted')
+        return redirect('admin_rating_list')
+
+    return render(request, 'adminpanel/rating_delete.html', {'rating': rating})
+
+
+@login_required
+def dispute_list_view(request):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    disputes = Dispute.objects.all().order_by('-created_at')
+
+    status = request.GET.get('status')
+    if status in ('OPEN', 'UPHELD', 'REJECTED'):
+        disputes = disputes.filter(status=status)
+
+    return render(request, 'adminpanel/dispute_list.html', {'disputes': disputes, 'status': status})
+
+
+@login_required
+def dispute_resolve_view(request, dispute_id):
+    if request.user.role != 'STAFF':
+        return redirect('index')
+
+    dispute = get_object_or_404(Dispute, id=dispute_id)
+
+    if dispute.status != 'OPEN':
+        messages.error(request, 'This dispute has already been resolved')
+        return redirect('admin_dispute_list')
+
+    if request.method == 'POST':
+        form = DisputeResolveForm(request.POST)
+        if form.is_valid():
+            dispute.admin_note = form.cleaned_data['admin_note']
+            dispute.resolved_by = request.user
+            dispute.resolved_at = timezone.now()
+            
+            if form.cleaned_data['decision'] == 'UPHOLD':
+                dispute.status = 'UPHELD'
+            else:
+                dispute.status = 'REJECTED'
+            dispute.save()
+
+            # upholding removes the rating, but the dispute stays as a record.
+            if dispute.status == 'UPHELD' and dispute.rating:
+                dispute.rating.delete()
+
+            messages.success(request, 'Dispute resolved')
+            return redirect('admin_dispute_list')
+    else:
+        form = DisputeResolveForm()
+
+    return render(request, 'adminpanel/dispute_resolve.html', {'dispute': dispute, 'form': form})

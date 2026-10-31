@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Ratings{% endblock %}
+
+{% block header %}
+    Ratings
+{% endblock %}
+
+{% block content %}
+    <p>
+        Show:
+        <a href="{% url 'admin_rating_list' %}">All</a> |
+        <a href="?role=TUTOR">Rated tutors</a> |
+        <a href="?role=PARENT">Rated parents</a>
+    </p>
+
+    <table>
+        <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Listing</th>
+            <th>Child</th>
+            <th>Stars</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        {% for r in ratings %}
+        <tr>
+            <td>{{ r.rater.email }}</td>
+            <td>
+                {% if r.rated_tutor %}{{ r.rated_tutor.user.email }}{% else %}{{ r.rated_parent.email }}{% endif %}
+            </td>
+            <td>{{ r.package.enrolment_request.listing }}</td>
+            <td>{{ r.package.enrolment_request.child.first_name }}</td>
+            <td>{{ r.stars }} / 5</td>
+            <td>{{ r.created_at|date:"d M Y" }}</td>
+            <td><a href="{% url 'admin_rating_delete' r.id %}">Delete</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No ratings.</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

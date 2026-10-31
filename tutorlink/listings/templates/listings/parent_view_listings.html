@@ -56,7 +56,13 @@
             <td>{{ listing }} </td>
             <td>${{ listing.rate_per_hour }}/hr</td>
             <td>{{ listing.tutor.user.first_name }}</td>
-            <td>Rating to go here</td>
+            <td>
+                {% if listing.rating_count %}
+                    {{ listing.avg_rating|floatformat:1 }} / 5 ({{ listing.rating_count }})
+                {% else %}
+                    No ratings yet
+                {% endif %}
+            </td>
             <td>
                 <a href="{% url 'send_enrolment_request_view' listing.pk %}">
                     Send a request

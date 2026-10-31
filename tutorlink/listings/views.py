@@ -3,6 +3,8 @@ from .models import Listing
 from accounts.models import TutorProfile, LEVEL_CHOICES
 from .forms import ListingForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg, Count
+
 
 
 # Create your views here.
@@ -12,7 +14,11 @@ def parent_listings_view(request):
         return redirect("index")
     
     # filtering logic
-    listings = Listing.objects.filter(status="OPEN")
+    listings = Listing.objects.filter(status="OPEN").annotate(
+        avg_rating=Avg('tutor__ratings_received__stars'),
+        rating_count=Count('tutor__ratings_received'),
+    )
+
 
     subject = request.GET.get("subject")
     if subject:

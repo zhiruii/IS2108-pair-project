@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from enrolments.models import Package
-from .forms import RatingForm
-from .models import Rating
+from .forms import RatingForm, DisputeForm
+from .models import Rating, Dispute
 from django.db.models import Avg
 
 # Create your views here.
@@ -58,3 +58,37 @@ def my_ratings_view(request):
     average = received.aggregate(Avg('stars'))['stars__avg']
 
     return render(request, 'ratings/my_ratings.html', {'given': given, 'received': received, 'average': average, 'to_rate': to_rate})
+
+@login_required
+def dispute_rating_view(request, rating_id):
+    rating = get_object_or_404(Rating, id=rating_id)
+
+    # only the person who was rated can dispute it
+    rated_user = rating.rated_tutor.user if rating.rated_tutor else rating.rated_parent
+    if request.user != rated_user:
+        return redirect('index')
+
+    if Dispute.objects.filter(rating=rating).exists():
+        messages.error(request, 'This rating has already been disputed')
+        return redirect('my_disputes')
+
+    if request.method == 'POST':
+        form = DisputeForm(request.POST)
+        if form.is_valid():
+            dispute = form.save(commit=False)
+            dispute.rating = rating
+            dispute.raised_by = request.user
+            dispute.rating_summary = str(rating)
+            dispute.save()
+            messages.success(request, 'Your dispute has been sent to staff')
+            return redirect('my_disputes')
+    else:
+        form = DisputeForm()
+
+    return render(request, 'ratings/dispute_form.html', {'form': form, 'rating': rating})
+
+
+@login_required
+def my_disputes_view(request):
+    disputes = Dispute.objects.filter(raised_by=request.user).order_by('-created_at')
+    return render(request, 'ratings/my_disputes.html', {'disputes': disputes})
