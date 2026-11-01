@@ -166,8 +166,12 @@ def tutor_public_profile_view(request, pk):
     listings = profile.listings.filter(status="OPEN").order_by("weekday", "start_time")
     # 2. rating summary: 
     ratings = profile.ratings_received.aggregate(avg=Avg("stars"), count=Count("id"))
+    recent_ratings = profile.ratings_received.select_related(
+        "rater", "package__enrolment_request__listing"
+    ).order_by("-created_at")[:10]  
     return render(request, 
                   "listings/tutor_public_profile.html",
                   {'profile': profile,
                    'listings': listings,
-                   'ratings': ratings})
+                   'ratings': ratings,
+                   'recent_ratings': recent_ratings})

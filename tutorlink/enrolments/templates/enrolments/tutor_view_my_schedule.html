@@ -90,11 +90,11 @@ My Schedule
 {% if past_page.paginator.num_pages > 1 %}
 <p class="pagination">
     {% if past_page.has_previous %}
-        <a href="?page={{ listings_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}">« Prev</a>
+        <a href="?page={{ past_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}">« Prev</a>
     {% endif %}
     Page {{ past_page.number }} of {{ past_page.paginator.num_pages }}
     {% if past_page.has_next %}
-        <a href="?page={{ listings_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}">Next »</a>
+        <a href="?page={{ past_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}">Next »</a>
     {% endif %}
 </p>
 {% endif %}

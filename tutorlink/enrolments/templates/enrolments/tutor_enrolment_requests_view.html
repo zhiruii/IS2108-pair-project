@@ -24,7 +24,7 @@
         <tr>
             <td>{{ r.listing }}</td>
             <td>{{ r.child }}</td>
-            <td>{{ r.child.parent.first_name }}</td>
+            <td>{{ r.child.parent.first_name }} {{ r.child.parent.last_name }}</td>
             <td>{{ r.start_date }}</td>
             <td>{{ r.message|default:"-" }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
