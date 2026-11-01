@@ -29,13 +29,20 @@
             <td>{{ r.message|default:"-" }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
             <td>
-                <form method="post" action="{% url 'tutor_accept_request_view' r.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('Accept this request?')">Accept</button>
-                </form>
-                <a href="{% url 'tutor_decline_request_view' r.pk %}">
-                    Decline
-                </a>
+                {% if r.listing.status == "OPEN" %}
+                    <form method="post" action="{% url 'tutor_accept_request_view' r.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Accept this request?')">Accept</button>
+                    </form>
+                    <a href="{% url 'tutor_decline_request_view' r.pk %}">
+                        Decline
+                    </a>
+                {% else %}
+                    <span>On hold: Awaiting payment</span>
+                    <a href="{% url 'tutor_decline_request_view' r.pk %}">
+                        Decline
+                    </a>
+                {% endif %}
             </td>
         </tr>
         {% empty %}

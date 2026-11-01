@@ -39,6 +39,7 @@
                         {% if user.role == 'PARENT' %}
                         <li><a href="{% url 'parent_profile' %}">My profile</a></li>
                         <li><a href="{% url 'child_list' %}">My children</a></li>
+                        <li><a href="{% url 'parent_view_my_lessons' %}">My Lessons</a></li>
                         <li><a href="{% url 'parent_listings_view' %}">View listings</a></li>
                         <li><a href="{% url 'parent_my_requests_view' %}">My requests</a></li>
                         <li><a href="{% url 'my_ratings' %}">My ratings</a></li>

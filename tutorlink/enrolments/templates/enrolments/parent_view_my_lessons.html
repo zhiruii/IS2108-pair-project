@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}My Lessons{% endblock %}
+
+{% block header %}
+My Lessons
+{% endblock %}
+
+{% block content %}
+{% with next=upcoming_lessons.first %}
+{% if next %}
+<div class="stats">
+    <div class="stat">
+        <span class="stat-label">Next lesson</span>
+        <span class="stat-number">{{ next.date|date:"D d M" }}, {{ next.start_time|time:"H:i" }}</span>
+        <span>{{ next.package.enrolment_request.listing.get_subject_display }} with {{ next.package.enrolment_request.listing.tutor.user.first_name }} ({{ next.package.enrolment_request.child }})</span>
+    </div>
+</div>
+{% endif %}
+{% endwith %}
+<p>
+    Show:
+    <a href="?{% if child_choice %}child={{ child_choice }}{% endif %}">All</a> |
+    <a href="?show=upcoming{% if child_choice %}&child={{ child_choice }}{% endif %}">Upcoming</a> |
+    <a href="?show=past{% if child_choice %}&child={{ child_choice }}{% endif %}">Past</a>
+</p>
+<p>
+    Child:
+    <a href="?{% if show %}show={{ show }}{% endif %}">All</a>
+    {% for c in children %}
+        | <a href="?child={{ c.pk }}{% if show %}&show={{ show }}{% endif %}">{{ c.first_name }}</a>
+    {% endfor %}
+</p>
+{% if show != "past" %}
+<h2>Upcoming lessons</h2>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Child</th>
+        <th>Tutor</th>
+        <th>Subject</th>
+        <th>Action</th> <!-- reschedule req later-->
+    </tr>
+    {% for lesson in upcoming_lessons %}
+    <tr>
+        <td>{{ lesson.date|date:"D d M Y" }}</td>
+        <td>{{ lesson.start_time|time:"H:i" }} - {{ lesson.end_time|time:"H:i" }}</td>
+        <td>{{ lesson.package.enrolment_request.child }}</td>
+        <td>{{ lesson.package.enrolment_request.listing.tutor.user.first_name }}</td>
+        <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
+        <td>Reschedule</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">
+            You have no upcoming lessons.
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if show != "upcoming" %}
+<h2>Past</h2>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Child</th>
+        <th>Tutor</th>
+        <th>Subject</th>
+        <th>Status</th>
+    </tr>
+    {% for lesson in past_lessons %}
+    {% with req=lesson.package.enrolment_request %}
+    <tr>
+        <td>{{ lesson.date|date:"D d M Y" }}</td>
+        <td>{{ lesson.start_time|time:"H:i" }}–{{ lesson.end_time|time:"H:i" }}</td>
+        <td>{{ req.child }}</td>
+        <td>{{ req.listing.tutor.user.first_name }}</td>
+        <td>{{ req.listing.get_subject_display }}</td>
+        <td>{{ lesson.get_status_display }}</td>
+    </tr>
+    {% endwith %}
+    {% empty %}
+    <tr>
+        <td colspan="6">You have no past lessons.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}
