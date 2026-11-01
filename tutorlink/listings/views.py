@@ -5,6 +5,8 @@ from .forms import ListingForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count, Q
 from enrolments.utils import expire_overdue_requests
+from ml.predict import ranges_for_listings, verdict, VERDICT_LABELS
+
 
 
 # Create your views here.
@@ -41,6 +43,13 @@ def parent_listings_view(request):
     max_rate = request.GET.get("max_rate")
     if max_rate:
         listings = listings.filter(rate_per_hour__lte=max_rate)
+    
+    listings = list(listings.select_related("tutor__user"))
+    ranges = ranges_for_listings(listings)
+    for i, listing in enumerate(listings):
+        listing.price_range = ranges[i]
+        listing.price_verdict = VERDICT_LABELS.get(verdict(listing.rate_per_hour, ranges[i]))
+
 
     return render(request, "listings/parent_view_listings.html", {"listings": listings, 
                                                                   'subject_choices': Listing.SUBJECT_CHOICES,
