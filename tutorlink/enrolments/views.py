@@ -7,6 +7,8 @@ from .forms import EnrolmentRequestForm
 from django.utils import timezone
 from datetime import timedelta
 from .utils import expire_overdue_requests
+from django.core.paginator import Paginator
+
 
 # Create your views here.
 @login_required
@@ -48,8 +50,15 @@ def parent_my_requests_view(request):
     active_status = ["ACCEPTED", "PENDING"]
     active_requests = all_requests.filter(status__in=active_status)
     past_requests = all_requests.exclude(status__in=active_status)
+
+    paginator = Paginator(past_requests, 5)
+    page_number = request.GET.get("page")
+    past_page = paginator.get_page(page_number)
+
     return render(
-        request, "enrolments/parent_my_requests_view.html", {"active_requests":active_requests, "past_requests":past_requests}
+        request,
+        "enrolments/parent_my_requests_view.html",
+        {"active_requests": active_requests, "past_page": past_page},
     )
 
 
@@ -68,8 +77,13 @@ def parent_withdraw_request_view(request, pk):
         enrolment_request.save()
         return redirect("parent_my_requests_view")
     else:
-        return render(request, "enrolments/parent_withdraw_request_view.html", {"enrolment_request": enrolment_request})
-    
+        return render(
+            request,
+            "enrolments/parent_withdraw_request_view.html",
+            {"enrolment_request": enrolment_request},
+        )
+
+
 @login_required
 def tutor_requests_view(request):
     if request.user.role != "TUTOR":
@@ -83,54 +97,71 @@ def tutor_requests_view(request):
     selected_listing = None
     listing_pk = request.GET.get("listing")
     if listing_pk:
-        selected_listing = get_object_or_404(Listing, pk=listing_pk, tutor__user=request.user)
+        selected_listing = get_object_or_404(
+            Listing, pk=listing_pk, tutor__user=request.user
+        )
         pending_requests = pending_requests.filter(listing=selected_listing)
+
+    paginator = Paginator(pending_requests, 10)
+    page_num = request.GET.get("page")
+    pending_requests_page = paginator.get_page(page_num)
 
     return render(
         request,
         "enrolments/tutor_enrolment_requests_view.html",
-        {"pending_requests": pending_requests, "selected_listing": selected_listing},
-    )  
+        {"pending_requests_page": pending_requests_page, "selected_listing": selected_listing},
+    )
+
 
 @login_required
 def tutor_accept_request_view(request, pk):
     if request.user.role != "TUTOR":
-        return redirect('index')
+        return redirect("index")
     enrolment_request = get_object_or_404(
-        EnrolmentRequest, pk=pk, status="PENDING", listing__tutor__user=request.user, listing__status="OPEN"
-    )    
-    if request.method == 'POST':
+        EnrolmentRequest,
+        pk=pk,
+        status="PENDING",
+        listing__tutor__user=request.user,
+        listing__status="OPEN",
+    )
+    if request.method == "POST":
         enrolment_request.status = "ACCEPTED"
         enrolment_request.listing.status = "RESERVED"
         enrolment_request.listing.save()
         enrolment_request.decided_at = timezone.now()
         enrolment_request.pay_by = timezone.now() + timedelta(hours=48)
         enrolment_request.save()
-    return redirect('tutor_requests_view')
+    return redirect("tutor_requests_view")
+
 
 @login_required
 def tutor_decline_request_view(request, pk):
     if request.user.role != "TUTOR":
-        return redirect('index')
+        return redirect("index")
     enrolment_request = get_object_or_404(
         EnrolmentRequest, pk=pk, status="PENDING", listing__tutor__user=request.user
-    )    
-    if request.method == 'POST':
+    )
+    if request.method == "POST":
         enrolment_request.status = "DECLINED"
         enrolment_request.decided_at = timezone.now()
         reason = request.POST.get("decline_reason", "")
         enrolment_request.decline_reason = reason
         enrolment_request.save()
-        return redirect('tutor_requests_view')
+        return redirect("tutor_requests_view")
     else:
-        return render(request, 'enrolments/tutor_decline_request_view.html', {'enrolment_request': enrolment_request})
+        return render(
+            request,
+            "enrolments/tutor_decline_request_view.html",
+            {"enrolment_request": enrolment_request},
+        )
+
 
 # parent view my lessons
 @login_required
 def parent_view_my_lessons(request):
-    if request.user.role != 'PARENT':
-        return redirect('index')
-    
+    if request.user.role != "PARENT":
+        return redirect("index")
+
     show = request.GET.get("show")
     child_choice = request.GET.get("child")
     if child_choice and not child_choice.isdigit():
@@ -141,23 +172,87 @@ def parent_view_my_lessons(request):
     )
     if child_choice:
         lessons = lessons.filter(package__enrolment_request__child__id=child_choice)
-    
+
     upcoming_lessons = lessons.filter(
-        status="SCHEDULED",
-        date__gte=timezone.localdate()
+        status="SCHEDULED", date__gte=timezone.localdate()
     ).order_by("date", "start_time")
-    
+
     past_lessons = lessons.exclude(
-        status="SCHEDULED",
-        date__gte=timezone.localdate()
+        status="SCHEDULED", date__gte=timezone.localdate()
     ).order_by("-date", "-start_time")
-    children = Child.objects.filter(
-        parent=request.user
+
+    children = Child.objects.filter(parent=request.user)
+
+    paginator = Paginator(past_lessons, 5)
+    page_number = request.GET.get("page")
+    past_page = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "enrolments/parent_view_my_lessons.html",
+        {
+            "upcoming_lessons": upcoming_lessons,
+            "past_page": past_page,
+            "show": show,
+            "child_choice": child_choice,
+            "children": children,
+        },
     )
-        
-    return render(request, "enrolments/parent_view_my_lessons.html",
-                  {"upcoming_lessons": upcoming_lessons,
-                   "past_lessons": past_lessons,
-                   "show": show,
-                   "child_choice": child_choice,
-                   "children": children})
+
+
+# tutor view schedule
+@login_required
+def tutor_view_my_schedule(request):
+    if request.user.role != "TUTOR":
+        return redirect("index")
+
+    show = request.GET.get("show")
+
+    lessons = Lesson.objects.filter(
+        package__enrolment_request__listing__tutor__user=request.user
+    )
+
+    upcoming_lessons = lessons.filter(
+        status="SCHEDULED", date__gte=timezone.localdate()
+    ).order_by("date", "start_time")
+
+    past_lessons = lessons.exclude(
+        status="SCHEDULED", date__gte=timezone.localdate()
+    ).order_by("-date", "-start_time")
+
+    paginator = Paginator(past_lessons, 5)
+    page_number = request.GET.get("page")
+    past_page = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "enrolments/tutor_view_my_schedule.html",
+        {"upcoming_lessons": upcoming_lessons, "past_page": past_page, "show": show},
+    )
+
+
+@login_required
+def tutor_complete_lesson_view(request, pk):
+    if request.user.role != "TUTOR":
+        return redirect("index")
+
+    lesson = get_object_or_404(
+        Lesson,
+        pk=pk,
+        status="SCHEDULED",
+        package__enrolment_request__listing__tutor__user=request.user,
+    )
+
+    if request.method == "POST":
+        if lesson.date > timezone.localdate():
+            return redirect("tutor_view_my_schedule")
+        lesson.status = "COMPLETED"
+        lesson.completed_at = timezone.now()
+        lesson.save()
+
+        remaining = lesson.package.lessons.filter(status="SCHEDULED").exists()
+        if not remaining:
+            lesson.package.status = "COMPLETED"
+            lesson.package.save()
+
+    return redirect("tutor_view_my_schedule")

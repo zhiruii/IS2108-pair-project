@@ -20,7 +20,7 @@
             <th>Sent</th>
             <th>Action</th>
         </tr>
-        {% for r in pending_requests %}
+        {% for r in pending_requests_page %}
         <tr>
             <td>{{ r.listing }}</td>
             <td>{{ r.child }}</td>
@@ -53,4 +53,17 @@
         </tr>
         {% endfor %}
     </table>
+
+{% if pending_requests_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if pending_requests_page.has_previous %}
+        <a href="?page={{ pending_requests_page.previous_page_number }}{% if selected_listing %}&listing={{ selected_listing.pk }}{% endif %}">« Prev</a>
+    {% endif %}
+    Page {{ pending_requests_page.number }} of {{ pending_requests_page.paginator.num_pages }}
+    {% if pending_requests_page.has_next %}
+        <a href="?page={{ pending_requests_page.next_page_number }}{% if selected_listing %}&listing={{ selected_listing.pk }}{% endif %}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endblock %}

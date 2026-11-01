@@ -72,7 +72,7 @@ My Lessons
         <th>Subject</th>
         <th>Status</th>
     </tr>
-    {% for lesson in past_lessons %}
+    {% for lesson in past_page %}
     {% with req=lesson.package.enrolment_request %}
     <tr>
         <td>{{ lesson.date|date:"D d M Y" }}</td>
@@ -89,6 +89,19 @@ My Lessons
     </tr>
     {% endfor %}
 </table>
+
+{% if past_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if past_page.has_previous %}
+        <a href="?page={{ past_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}{% if child_choice %}&child={{ child_choice }}{% endif %}">« Prev</a>
+    {% endif %}
+    Page {{ past_page.number }} of {{ past_page.paginator.num_pages }}
+    {% if past_page.has_next %}
+        <a href="?page={{ past_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}{% if child_choice %}&child={{ child_choice }}{% endif %}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endif %}
 
 {% endblock %}

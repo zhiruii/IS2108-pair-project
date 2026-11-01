@@ -33,7 +33,7 @@ Your Earnings
         <th>Platform fees (5%)</th>
         <th>Earned</th>
     </tr>
-    {% for lesson in completed %}
+    {% for lesson in page_obj %}
     <tr>
         <td>{{ lesson.completed_at|date:"d D M Y"}}</td>
         <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
@@ -50,4 +50,17 @@ Your Earnings
     </tr>
     {% endfor %}
 </table>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">« Prev</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endblock %}

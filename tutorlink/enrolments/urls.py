@@ -6,7 +6,9 @@ from .views import (
     tutor_requests_view,
     tutor_accept_request_view,
     tutor_decline_request_view,
-    parent_view_my_lessons
+    parent_view_my_lessons,
+    tutor_view_my_schedule,
+    tutor_complete_lesson_view
 )
 
 urlpatterns = [
@@ -40,5 +42,15 @@ urlpatterns = [
         "my-lessons/",
         parent_view_my_lessons,
         name="parent_view_my_lessons"
-    )
+    ),
+    path(
+        "my-schedule/",
+        tutor_view_my_schedule,
+        name="tutor_view_my_schedule"
+    ),
+    path(
+        "complete/<int:pk>/",
+        tutor_complete_lesson_view,
+        name="tutor_complete_lesson_view"
+    ),
 ]

@@ -17,7 +17,7 @@ Payment History
         <th>Status</th>
         <th>Receipt</th>
     </tr>
-    {% for p in packages %}
+    {% for p in page_obj %}
     <tr>
         <td>{{ p.created_at|date:"d M Y" }}</td>
         <td>{{ p.enrolment_request.child }}</td>
@@ -33,4 +33,19 @@ Payment History
     </tr>
     {% endfor %}
 </table>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">« Prev</a>
+    {% endif %}
+
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endblock %}
