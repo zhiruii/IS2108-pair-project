@@ -4,4 +4,8 @@ pandas==2.3.3
 joblib==1.6.0
 numpy==2.5.3
 scipy==1.18.1
+<<<<<<< HEAD
 Pillow>=13.0,<14
+=======
+Pillow>=13.0,<14
+>>>>>>> d1d637dfd1673e789e33caa8f7fc135f8e75ce2d
