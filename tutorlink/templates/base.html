@@ -48,8 +48,9 @@
 
                         {% elif user.role == 'TUTOR' %}
                         <li><a href="{% url 'tutor_profile' %}">My profile</a></li>
-                        <li><a href="{% url 'tutor_listings_view' %}">View your listings</a></li>
-                        <li><a href="{% url 'tutor_requests_view' %}">Your pending requests</a></li>
+                        <li><a href="{% url 'tutor_listings_view' %}">My listings</a></li>
+                        <li><a href="{% url 'tutor_view_my_schedule' %}">My schedule</a></li>
+                        <li><a href="{% url 'tutor_requests_view' %}">My pending requests</a></li>
                         <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
                         <li><a href="{% url 'my_disputes' %}">My disputes</a></li>
                         <li><a href="{% url 'tutor_earnings_view' %}">My earnings</a></li>

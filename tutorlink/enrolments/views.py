@@ -151,6 +151,7 @@ def parent_view_my_lessons(request):
         status="SCHEDULED",
         date__gte=timezone.localdate()
     ).order_by("-date", "-start_time")
+    
     children = Child.objects.filter(
         parent=request.user
     )
@@ -161,3 +162,60 @@ def parent_view_my_lessons(request):
                    "show": show,
                    "child_choice": child_choice,
                    "children": children})
+
+# tutor view schedule
+@login_required
+def tutor_view_my_schedule(request):
+    if request.user.role != 'TUTOR':
+        return redirect('index')
+    
+    show = request.GET.get("show")
+
+    lessons = Lesson.objects.filter(
+        package__enrolment_request__listing__tutor__user=request.user
+    )
+    
+    upcoming_lessons = lessons.filter(
+        status="SCHEDULED",
+        date__gte=timezone.localdate()
+    ).order_by("date", "start_time")
+    
+    past_lessons = lessons.exclude(
+        status="SCHEDULED",
+        date__gte=timezone.localdate()
+    ).order_by("-date", "-start_time")
+    
+    
+    return render(
+        request,
+        "enrolments/tutor_view_my_schedule.html",
+        {"upcoming_lessons": upcoming_lessons,
+         "past_lessons": past_lessons,
+         "show": show}
+    )
+    
+@login_required
+def tutor_complete_lesson_view(request, pk):
+    if request.user.role != 'TUTOR':
+        return redirect('index')
+    
+    lesson = get_object_or_404(
+        Lesson,
+        pk=pk,
+        status="SCHEDULED",
+        package__enrolment_request__listing__tutor__user=request.user
+    )
+    
+    if request.method == 'POST':
+        if lesson.date > timezone.localdate():
+            return redirect("tutor_view_my_schedule")
+        lesson.status="COMPLETED"
+        lesson.completed_at=timezone.now()
+        lesson.save()
+        
+        remaining = lesson.package.lessons.filter(status="SCHEDULED").exists()
+        if not remaining:
+            lesson.package.status="COMPLETED"
+            lesson.package.save()
+        
+    return redirect('tutor_view_my_schedule')
