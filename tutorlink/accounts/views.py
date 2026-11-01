@@ -84,7 +84,7 @@ def tutor_profile_edit_view(request):
 
     # Use general UserProfileForm and specific TutorProfileForm
     if request.method == 'POST':
-        user_form = UserProfileForm(request.POST, instance=request.user)
+        user_form = UserProfileForm(request.POST, request.FILES, instance=request.user)
         profile_form = TutorProfileForm(request.POST, instance=profile)
         user_ok = user_form.is_valid()
         profile_ok = profile_form.is_valid()
@@ -164,7 +164,7 @@ def parent_profile_edit_view(request):
     if request.user.role != 'PARENT':
         return redirect('index')
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=request.user)
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect('parent_profile')

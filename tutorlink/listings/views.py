@@ -8,21 +8,21 @@ from enrolments.utils import expire_overdue_requests
 from ml.predict import ranges_for_listings, verdict, VERDICT_LABELS
 
 
+from django.core.paginator import Paginator
 
 # Create your views here.
 @login_required
 def parent_listings_view(request):
     if request.user.role != "PARENT":
         return redirect("index")
-    
+
     expire_overdue_requests()
 
     # filtering logic
     listings = Listing.objects.filter(status="OPEN").annotate(
-        avg_rating=Avg('tutor__ratings_received__stars'),
-        rating_count=Count('tutor__ratings_received'),
-    )
-
+        avg_rating=Avg("tutor__ratings_received__stars"),
+        rating_count=Count("tutor__ratings_received"),
+    ).order_by("weekday", "start_time")
 
     subject = request.GET.get("subject")
     if subject:
@@ -35,11 +35,11 @@ def parent_listings_view(request):
     weekday = request.GET.get("weekday")
     if weekday:
         listings = listings.filter(weekday=weekday)
-        
+
     mode = request.GET.get("mode")
     if mode:
         listings = listings.filter(mode=mode)
-        
+
     max_rate = request.GET.get("max_rate")
     if max_rate:
         listings = listings.filter(rate_per_hour__lte=max_rate)
@@ -50,13 +50,27 @@ def parent_listings_view(request):
         listing.price_range = ranges[i]
         listing.price_verdict = VERDICT_LABELS.get(verdict(listing.rate_per_hour, ranges[i]))
 
+        
+    paginator = Paginator(listings, 10)
+    page_num = request.GET.get("page")
+    page_obj = paginator.get_page(page_num)
+    params = request.GET.copy()     # copy of all the filters in the URL
+    params.pop("page", None)        # take out the old page number
+    querystring = params.urlencode()  # turn it back into text: "subject=MATH&mode=ONLINE"  
 
-    return render(request, "listings/parent_view_listings.html", {"listings": listings, 
-                                                                  'subject_choices': Listing.SUBJECT_CHOICES,
-                                                                  'level_choices': LEVEL_CHOICES,
-                                                                  'weekday_choices': Listing.WEEKDAY_CHOICES,
-                                                                  'mode_choices': Listing.MODE_CHOICES,
-                                                                  'selected': request.GET})
+    return render(
+        request,
+        "listings/parent_view_listings.html",
+        {
+            "page_obj": page_obj,
+            "subject_choices": Listing.SUBJECT_CHOICES,
+            "level_choices": LEVEL_CHOICES,
+            "weekday_choices": Listing.WEEKDAY_CHOICES,
+            "mode_choices": Listing.MODE_CHOICES,
+            "selected": request.GET,
+            "querystring": querystring
+        },
+    )
 
 
 @login_required
@@ -66,25 +80,33 @@ def tutor_listings_view(request):
     profile = TutorProfile.objects.filter(user=request.user).first()
     if profile is None:
         return redirect("tutor_profile_create")
-    
+
     expire_overdue_requests()
 
-    listings = profile.listings.all().annotate(
-        pending_count=Count(
-            "enrolment_requests",
-            filter=Q(enrolment_requests__status="PENDING"),
+    listings = (
+        profile.listings.all()
+        .annotate(
+            pending_count=Count(
+                "enrolment_requests",
+                filter=Q(enrolment_requests__status="PENDING"),
+            )
         )
-    ).order_by("weekday", "start_time")
-    
+        .order_by("weekday", "start_time")
+    )
+
     # Filter by status from the URL, e.g. ?status=OPEN
     status = request.GET.get("status")
     if status in ("OPEN", "FILLED", "CLOSED", "RESERVED"):
         listings = listings.filter(status=status)
+        
+    paginator = Paginator(listings, 10)
+    page_number = request.GET.get("page")
+    listings_page = paginator.get_page(page_number)
 
     return render(
         request,
         "listings/tutor_view_listings.html",
-        {"listings": listings, "status": status},
+        {"listings_page": listings_page, "status": status},
     )
 
 
@@ -142,3 +164,24 @@ def close_listing_view(request, pk):
         listing.status = "CLOSED"
         listing.save()
     return redirect("tutor_listings_view")
+
+
+@login_required
+def tutor_public_profile_view(request, pk):
+    if request.user.role != "PARENT":
+        return redirect("index")
+
+    profile = get_object_or_404(TutorProfile, pk=pk)
+    # 1. that tutor's OPEN listings, ordered by weekday and start_time
+    listings = profile.listings.filter(status="OPEN").order_by("weekday", "start_time")
+    # 2. rating summary: 
+    ratings = profile.ratings_received.aggregate(avg=Avg("stars"), count=Count("id"))
+    recent_ratings = profile.ratings_received.select_related(
+        "rater", "package__enrolment_request__listing"
+    ).order_by("-created_at")[:10]  
+    return render(request, 
+                  "listings/tutor_public_profile.html",
+                  {'profile': profile,
+                   'listings': listings,
+                   'ratings': ratings,
+                   'recent_ratings': recent_ratings})

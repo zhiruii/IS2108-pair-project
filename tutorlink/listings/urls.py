@@ -1,5 +1,12 @@
 from django.urls import path
-from .views import parent_listings_view, tutor_listings_view, create_listing_view, edit_listing_view, close_listing_view
+from .views import (
+    parent_listings_view,
+    tutor_listings_view,
+    create_listing_view,
+    edit_listing_view,
+    close_listing_view,
+    tutor_public_profile_view
+)
 
 urlpatterns = [
     path("parent-view-listings/", parent_listings_view, name="parent_listings_view"),
@@ -7,4 +14,5 @@ urlpatterns = [
     path("create-listing/", create_listing_view, name="create_listing_view"),
     path("edit-listing/<int:pk>/", edit_listing_view, name="edit_listing_view"),
     path("close-listing/<int:pk>/", close_listing_view, name="close_listing_view"),
+    path("tutor-profile/<int:pk>/", tutor_public_profile_view, name="tutor_public_profile_view")
 ]

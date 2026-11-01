@@ -3,10 +3,11 @@
 {% block title %}Receipt{% endblock %}
 
 {% block header %}
-Receipt
+Payment
 {% endblock %}
 
 {% block content %}
+<h2>Receipt</h2>
 <p>Child: {{ package.enrolment_request.child }}</p>
 <p>Listing: {{ package.enrolment_request.listing }}</p>
 <p>Paid on: {{ package.created_at|date:"d M Y" }}</p>

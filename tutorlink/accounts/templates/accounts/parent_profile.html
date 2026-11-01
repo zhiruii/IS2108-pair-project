@@ -5,11 +5,24 @@
 {% endblock %}
 
 {% block content %}
-    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-    <p>Email: {{ user.email }}</p>
-    <p>Phone: {{ user.phone }}</p>
-    <p>Address: {{ user.address }}</p>
-    <p>Date of birth: {{ user.date_of_birth }}</p>
-    <p>Gender: {{ user.get_gender_display }}</p>
-    <a href="{% url 'parent_profile_edit' %}">Edit profile</a>
+    <div class="profile-head">
+        {% if user.avatar %}
+            <img class="avatar" src="{{ user.avatar.url }}" alt="Profile photo">
+        {% else %}
+            <div class="avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+        {% endif %}
+        <div>
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <p>{{ user.email }}</p>
+        </div>
+        <a class="btn" href="{% url 'parent_profile_edit' %}">Edit profile</a>
+    </div>
+
+    <h2>Personal details</h2>
+    <dl class="details">
+        <div><dt>Phone</dt><dd>{{ user.phone|default:"—" }}</dd></div>
+        <div><dt>Date of birth</dt><dd>{{ user.date_of_birth|date:"d M Y"|default:"—" }}</dd></div>
+        <div><dt>Gender</dt><dd>{{ user.get_gender_display|default:"—" }}</dd></div>
+        <div class="wide"><dt>Address</dt><dd>{{ user.address|default:"—" }}</dd></div>
+    </dl>
 {% endblock %}

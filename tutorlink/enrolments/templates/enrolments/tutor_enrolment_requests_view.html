@@ -20,22 +20,29 @@
             <th>Sent</th>
             <th>Action</th>
         </tr>
-        {% for r in pending_requests %}
+        {% for r in pending_requests_page %}
         <tr>
             <td>{{ r.listing }}</td>
             <td>{{ r.child }}</td>
-            <td>{{ r.child.parent.first_name }}</td>
+            <td>{{ r.child.parent.first_name }} {{ r.child.parent.last_name }}</td>
             <td>{{ r.start_date }}</td>
             <td>{{ r.message|default:"-" }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
             <td>
-                <form method="post" action="{% url 'tutor_accept_request_view' r.pk %}">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('Accept this request?')">Accept</button>
-                </form>
-                <a href="{% url 'tutor_decline_request_view' r.pk %}">
-                    Decline
-                </a>
+                {% if r.listing.status == "OPEN" %}
+                    <form method="post" action="{% url 'tutor_accept_request_view' r.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('Accept this request?')">Accept</button>
+                    </form>
+                    <a href="{% url 'tutor_decline_request_view' r.pk %}">
+                        Decline
+                    </a>
+                {% else %}
+                    <span>On hold: Awaiting payment</span>
+                    <a href="{% url 'tutor_decline_request_view' r.pk %}">
+                        Decline
+                    </a>
+                {% endif %}
             </td>
         </tr>
         {% empty %}
@@ -46,4 +53,17 @@
         </tr>
         {% endfor %}
     </table>
+
+{% if pending_requests_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if pending_requests_page.has_previous %}
+        <a href="?page={{ pending_requests_page.previous_page_number }}{% if selected_listing %}&listing={{ selected_listing.pk }}{% endif %}">« Prev</a>
+    {% endif %}
+    Page {{ pending_requests_page.number }} of {{ pending_requests_page.paginator.num_pages }}
+    {% if pending_requests_page.has_next %}
+        <a href="?page={{ pending_requests_page.next_page_number }}{% if selected_listing %}&listing={{ selected_listing.pk }}{% endif %}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endblock %}

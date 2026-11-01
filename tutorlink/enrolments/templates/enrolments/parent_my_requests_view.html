@@ -50,7 +50,7 @@
             <th>Status</th>
             <th>Sent date</th>
         </tr>
-        {% for r in past_requests %}
+        {% for r in past_page %}
         <tr>
             <td>{{ r.listing }}</td>
             <td>{{ r.listing.tutor.user.first_name }}</td>
@@ -66,4 +66,17 @@
         </tr>
         {% endfor %}
     </table>
+
+{% if past_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if past_page.has_previous %}
+        <a href="?page={{ past_page.previous_page_number }}">« Prev</a>
+    {% endif %}
+    Page {{ past_page.number }} of {{ past_page.paginator.num_pages }}
+    {% if past_page.has_next %}
+        <a href="?page={{ past_page.next_page_number }}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endblock %}

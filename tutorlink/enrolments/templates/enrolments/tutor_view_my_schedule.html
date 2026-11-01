@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}My Schedule{% endblock %}
+
+{% block header %}
+My Schedule
+{% endblock %}
+
+{% block content %}
+<p>
+    Show:
+    <a href="{% url 'tutor_view_my_schedule' %}">All</a> |
+    <a href="?show=upcoming">Upcoming</a> |
+    <a href="?show=past">Past</a>
+</p>
+{% if show != "past" %}
+<h2>Upcoming lessons</h2>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Parent</th>
+        <th>Child</th>
+        <th>Mode</th>
+        <th>Subject</th>
+    </tr>
+    {% for lesson in upcoming_lessons %}
+    {% with req=lesson.package.enrolment_request %}
+    <tr>
+        <td>{{ lesson.date|date:"D d M Y" }}</td>
+        <td>{{ lesson.start_time|time:"H:i" }}–{{ lesson.end_time|time:"H:i" }}</td>
+        <td>{{ req.child.parent.first_name }} {{ req.child.parent.last_name }}</td>
+        <td>{{ req.child }}</td>
+        <td>{{ req.listing.get_mode_display }}</td>
+        <td>{{ req.listing.get_subject_display }}</td>
+    </tr>
+    {% endwith %}
+    {% empty %}
+    <tr>
+        <td colspan="6">
+            You have no upcoming lessons.
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if show != "upcoming" %}
+<h2>Past Lessons</h2>
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Parent</th>
+        <th>Child</th>
+        <th>Mode</th>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    {% for lesson in past_page %}
+    {% with req=lesson.package.enrolment_request %}
+    <tr>
+        <td>{{ lesson.date|date:"D d M Y" }}</td>
+        <td>{{ lesson.start_time|time:"H:i" }}–{{ lesson.end_time|time:"H:i" }}</td>
+        <td>{{ req.child.parent.first_name }} {{ req.child.parent.last_name }}</td>
+        <td>{{ req.child }}</td>
+        <td>{{ req.listing.get_mode_display }}</td>
+        <td>{{ req.listing.get_subject_display }}</td>
+        <td>{{ lesson.get_status_display }}</td>
+        <td>
+            {% if lesson.status == "SCHEDULED" %}
+            <form method="post" action="{% url 'tutor_complete_lesson_view' lesson.pk %}">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Mark lesson as completed?')">Mark completed</button>
+            </form>
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+    {% endwith %}
+    {% empty %}
+    <tr>
+        <td colspan="8">You have no past lessons.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if past_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if past_page.has_previous %}
+        <a href="?page={{ past_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}">« Prev</a>
+    {% endif %}
+    Page {{ past_page.number }} of {{ past_page.paginator.num_pages }}
+    {% if past_page.has_next %}
+        <a href="?page={{ past_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    {{ enrolment_request.listing.tutor.user }}: {{ enrolment_request.listing }} for {{ enrolment_request.child }}
+    Tutor {{ enrolment_request.listing.tutor.user.first_name }}: {{ enrolment_request.listing }} for {{ enrolment_request.child }}
     <p>You won't be charged. The tutor will be notified that you've withdrawn.</p>
     <form method="post">
         {% csrf_token %}
