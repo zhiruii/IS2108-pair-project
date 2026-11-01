@@ -29,5 +29,4 @@ urlpatterns = [
     path('payments/', include('payments.urls')),
     path('ml/', include('ml.urls')),
 
-]
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
