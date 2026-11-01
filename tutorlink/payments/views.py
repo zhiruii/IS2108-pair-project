@@ -8,6 +8,7 @@ from decimal import Decimal
 from .forms import PaymentForm
 from enrolments.models import Lesson, Package
 from enrolments.utils import expire_overdue_requests
+from django.utils import timezone
 
 def get_price_summary(req_to_pay):
     lesson_dates = [req_to_pay.start_date + timedelta(days=7 * i) for i in range(4)]
@@ -94,6 +95,14 @@ def parent_payment_view(request, pk):
                 req_to_pay.listing.status="FILLED"
                 req_to_pay.save()
                 req_to_pay.listing.save()
+                EnrolmentRequest.objects.filter(
+                    listing=req_to_pay.listing, 
+                    status="PENDING"
+                    ).update(
+                        status="DECLINED",
+                        decline_reason="This slot has been filled by another student.",
+                        decided_at=timezone.now(),
+                    )
             return redirect('payment_success_view', package.pk)
     
     return render(

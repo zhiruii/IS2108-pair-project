@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from listings.models import Listing
 from accounts.models import Child
-from .models import EnrolmentRequest
+from .models import EnrolmentRequest, Lesson
 from .forms import EnrolmentRequestForm
 from django.utils import timezone
 from datetime import timedelta
@@ -97,7 +97,7 @@ def tutor_accept_request_view(request, pk):
     if request.user.role != "TUTOR":
         return redirect('index')
     enrolment_request = get_object_or_404(
-        EnrolmentRequest, pk=pk, status="PENDING", listing__tutor__user=request.user
+        EnrolmentRequest, pk=pk, status="PENDING", listing__tutor__user=request.user, listing__status="OPEN"
     )    
     if request.method == 'POST':
         enrolment_request.status = "ACCEPTED"
@@ -124,3 +124,40 @@ def tutor_decline_request_view(request, pk):
         return redirect('tutor_requests_view')
     else:
         return render(request, 'enrolments/tutor_decline_request_view.html', {'enrolment_request': enrolment_request})
+
+# parent view my lessons
+@login_required
+def parent_view_my_lessons(request):
+    if request.user.role != 'PARENT':
+        return redirect('index')
+    
+    show = request.GET.get("show")
+    child_choice = request.GET.get("child")
+    if child_choice and not child_choice.isdigit():
+        child_choice = None
+
+    lessons = Lesson.objects.filter(
+        package__enrolment_request__child__parent=request.user
+    )
+    if child_choice:
+        lessons = lessons.filter(package__enrolment_request__child__id=child_choice)
+    
+    upcoming_lessons = lessons.filter(
+        status="SCHEDULED",
+        date__gte=timezone.localdate()
+    ).order_by("date", "start_time")
+    
+    past_lessons = lessons.exclude(
+        status="SCHEDULED",
+        date__gte=timezone.localdate()
+    ).order_by("-date", "-start_time")
+    children = Child.objects.filter(
+        parent=request.user
+    )
+        
+    return render(request, "enrolments/parent_view_my_lessons.html",
+                  {"upcoming_lessons": upcoming_lessons,
+                   "past_lessons": past_lessons,
+                   "show": show,
+                   "child_choice": child_choice,
+                   "children": children})

@@ -4,7 +4,7 @@ Payment Confirmation page
 {% endblock %}
 
 {% block header %}
-Payment page
+Payment
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,9 @@ Payment page
 <form method="post">
     {% csrf_token %}
     {{ form }}
-    <button type="submit">Pay</button>
-    <a href="{% url 'parent_my_requests_view' %}" class="btn btn-outline">Back</a>
+    <div>
+        <button type="submit">Pay</button>
+        <a href="{% url 'parent_my_requests_view' %}" class="btn btn-outline">Back</a>
+    </div>
 </form>
 {% endblock %}

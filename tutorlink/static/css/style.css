@@ -286,6 +286,15 @@ form > div {
     accent-color: var(--green-dark);
 }
 
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row select {
+    width: auto;
+}
+
 /* ---------- Stat boxes (earnings) ---------- */
 .stats {
     display: flex;
