@@ -7,5 +7,80 @@
 {% block content %}
     {% if not user.is_authenticated %}
         <p>Welcome to Tutorlink! Please log in or sign up to get started.</p>
+
+    {% elif user.role == "PARENT" %}
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-label">Next lesson</span>
+                {% if next_lesson %}
+                    {% with req=next_lesson.package.enrolment_request %}
+                        <span class="stat-number">{{ next_lesson.date|date:"D d M" }}</span>
+                        {{ next_lesson.start_time|time:"H:i" }}–{{ next_lesson.end_time|time:"H:i" }}<br>
+                        {{ req.child.first_name }}: {{ req.listing.get_subject_display }} with {{ req.listing.tutor.user.first_name }}
+                    {% endwith %}
+                {% else %}
+                    <span class="stat-number">—</span>
+                    No upcoming lessons.
+                {% endif %}
+                <br><a href="{% url 'parent_view_my_lessons' %}">View all</a>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Pending requests</span>
+                <span class="stat-number">{{ pending_count }}</span>
+                <a href="{% url 'parent_my_requests_view' %}">View</a>
+            </div>
+        </div>
+
+        {% if to_pay %}
+            <h2>Awaiting payment</h2>
+            <table>
+                <tr>
+                    <th>Child</th>
+                    <th>Listing</th>
+                    <th>Pay within</th>
+                    <th></th>
+                </tr>
+                {% for r in to_pay %}
+                <tr>
+                    <td>{{ r.child.first_name }}</td>
+                    <td>{{ r.listing }}</td>
+                    <td>{{ r.pay_by|timeuntil }}</td>
+                    <td><a class="btn" href="{% url 'parent_pay_view' r.pk %}">Pay now</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+    {% elif user.role == "TUTOR" %}
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-label">Next lesson</span>
+                {% if next_lesson %}
+                    {% with req=next_lesson.package.enrolment_request %}
+                        <span class="stat-number">{{ next_lesson.date|date:"D d M" }}</span>
+                        {{ next_lesson.start_time|time:"H:i" }}–{{ next_lesson.end_time|time:"H:i" }}<br>
+                        {{ req.listing.get_subject_display }} with {{ req.child.first_name }}
+                    {% endwith %}
+                {% else %}
+                    <span class="stat-number">—</span>
+                    No upcoming lessons.
+                {% endif %}
+                <br><a href="{% url 'tutor_view_my_schedule' %}">View schedule</a>
+            </div>
+            <div class="stat">
+                <span class="stat-label">To mark completed</span>
+                <span class="stat-number">{{ to_mark }}</span>
+                {% if to_mark > 0 %}
+                    <a href="{% url 'tutor_view_my_schedule' %}?show=past">Mark now</a>
+                {% else %}
+                    All caught up.
+                {% endif %}
+            </div>
+            <div class="stat">
+                <span class="stat-label">Requests to review</span>
+                <span class="stat-number">{{ request_count }}</span>
+                <a href="{% url 'tutor_requests_view' %}">View</a>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

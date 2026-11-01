@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.user.first_name }} {{ profile.user.last_name }}{% endblock %}
+
+{% block header %}
+Tutor Profile
+{% endblock %}
+
+{% block content %}
+    <div class="profile-head">
+        {% if profile.user.avatar %}
+            <img class="avatar" src="{{ profile.user.avatar.url }}" alt="Profile photo">
+        {% else %}
+            <div class="avatar">{{ profile.user.first_name|first }}{{ profile.user.last_name|first }}</div>
+        {% endif %}
+        <div>
+            <h2>{{ profile.user.first_name }} {{ profile.user.last_name }}</h2>
+            <p>
+                {% if ratings.count %}
+                    ★ {{ ratings.avg|floatformat:1 }} ({{ ratings.count }} rating{{ ratings.count|pluralize }})
+                {% else %}
+                    No ratings yet
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <h2>About</h2>
+    <dl class="details">
+        <div><dt>Qualification</dt><dd>{{ profile.get_qualification_display }}</dd></div>
+        <div><dt>Experience</dt><dd>{{ profile.years_experience }} year{{ profile.years_experience|pluralize }}</dd></div>
+        <div><dt>Teaching mode</dt><dd>{{ profile.get_teaching_mode_display }}</dd></div>
+        <div class="wide"><dt>Bio</dt><dd>{{ profile.bio|default:"—"|linebreaksbr }}</dd></div>
+    </dl>
+
+    <h2>Open slots</h2>
+    <table>
+        <tr>
+            <th>Subject</th>
+            <th>Level</th>
+            <th>Day &amp; time</th>
+            <th>Mode</th>
+            <th>Rate</th>
+            <th></th>
+        </tr>
+        {% for listing in listings %}
+        <tr>
+            <td>{{ listing.get_subject_display }}</td>
+            <td>{{ listing.get_level_display }}</td>
+            <td>{{ listing.get_weekday_display }}, {{ listing.start_time|time:"H:i" }}–{{ listing.end_time|time:"H:i" }}</td>
+            <td>{{ listing.get_mode_display }}</td>
+            <td>${{ listing.rate_per_hour }}/h</td>
+            <td><a class="btn" href="{% url 'send_enrolment_request_view' listing.pk %}">Request</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No open slots right now.</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="{% url 'parent_listings_view' %}">« Back to listings</a></p>
+{% endblock %}

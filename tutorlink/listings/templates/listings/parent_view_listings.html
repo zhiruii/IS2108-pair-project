@@ -47,15 +47,17 @@
         <tr>
             <th>Listing</th>
             <th>Rate</th>
+            <th>Mode</th>
             <th>Tutor</th>
             <th>Rating</th>
             <th>Action</th>
         </tr>
-        {% for listing in listings %}
+        {% for listing in page_obj %}
         <tr>
             <td>{{ listing }} </td>
             <td>${{ listing.rate_per_hour }}/hr</td>
-            <td>{{ listing.tutor.user.first_name }}</td>
+            <td>{{ listing.get_mode_display }}</td>
+            <td><a href="{% url 'tutor_public_profile_view' listing.tutor.pk %}">{{ listing.tutor.user.first_name }}</a></td>
             <td>
                 {% if listing.rating_count %}
                     {{ listing.avg_rating|floatformat:1 }} / 5 ({{ listing.rating_count }})
@@ -71,10 +73,23 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">
+            <td colspan="6">
                 There are no available listings.
             </td>
         </tr>
         {% endfor %}
     </table>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">« Prev</a>
+    {% endif %}
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&{{ querystring }}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endblock %}

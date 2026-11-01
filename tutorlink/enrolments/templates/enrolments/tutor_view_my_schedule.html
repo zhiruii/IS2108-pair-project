@@ -23,7 +23,6 @@ My Schedule
         <th>Child</th>
         <th>Mode</th>
         <th>Subject</th>
-        <th>Action</th> <!-- reschedule req later-->
     </tr>
     {% for lesson in upcoming_lessons %}
     {% with req=lesson.package.enrolment_request %}
@@ -34,12 +33,11 @@ My Schedule
         <td>{{ req.child }}</td>
         <td>{{ req.listing.get_mode_display }}</td>
         <td>{{ req.listing.get_subject_display }}</td>
-        <td>Action</td>
     </tr>
     {% endwith %}
     {% empty %}
     <tr>
-        <td colspan="7">
+        <td colspan="6">
             You have no upcoming lessons.
         </td>
     </tr>
@@ -60,7 +58,7 @@ My Schedule
         <th>Status</th>
         <th>Action</th>
     </tr>
-    {% for lesson in past_lessons %}
+    {% for lesson in past_page %}
     {% with req=lesson.package.enrolment_request %}
     <tr>
         <td>{{ lesson.date|date:"D d M Y" }}</td>
@@ -88,6 +86,19 @@ My Schedule
     </tr>
     {% endfor %}
 </table>
+
+{% if past_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if past_page.has_previous %}
+        <a href="?page={{ listings_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}">« Prev</a>
+    {% endif %}
+    Page {{ past_page.number }} of {{ past_page.paginator.num_pages }}
+    {% if past_page.has_next %}
+        <a href="?page={{ listings_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
+
 {% endif %}
 
 {% endblock %}

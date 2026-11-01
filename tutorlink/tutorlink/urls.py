@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.urls import include, path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -25,4 +27,4 @@ urlpatterns = [
     path('enrolments/', include('enrolments.urls')),
     path('ratings/', include('ratings.urls')),
     path('payments/', include('payments.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -327,3 +327,65 @@ form > div {
     font-weight: 600;
     color: var(--ink);
 }
+
+/* ---------- Profile ---------- */
+.profile-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--green-pale);
+    color: var(--green-dark);
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-head h2 {
+    margin: 0;
+}
+
+.profile-head p {
+    margin: 2px 0 0;
+    color: var(--muted);
+}
+
+.profile-head .btn {
+    margin-left: auto;   /* pushes the button to the right */
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px 32px;
+    margin: 0 0 8px;
+}
+
+.details dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+}
+
+.details dd {
+    margin: 2px 0 0;
+}
+
+.details .wide {
+    grid-column: 1 / -1;   /* bio takes the full row */
+}
+
+img.avatar {
+    object-fit: cover;
+    background: none;
+}

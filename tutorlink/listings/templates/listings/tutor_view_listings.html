@@ -24,7 +24,7 @@
             <th>Status</th>
             <th>Action</th>
         </tr>
-        {% for listing in listings %}
+        {% for listing in listings_page %}
         <tr>
             <td>{{ listing }}</td>
             <td>${{ listing.rate_per_hour}}/hr</td>
@@ -60,5 +60,17 @@
         </tr>
         {% endfor %}
     </table>
+
+{% if listings_page.paginator.num_pages > 1 %}
+<p class="pagination">
+    {% if listings_page.has_previous %}
+        <a href="?page={{ listings_page.previous_page_number }}{% if status %}&status={{ status }}{% endif %}">« Prev</a>
+    {% endif %}
+    Page {{ listings_page.number }} of {{ listings_page.paginator.num_pages }}
+    {% if listings_page.has_next %}
+        <a href="?page={{ listings_page.next_page_number }}{% if status %}&status={{ status }}{% endif %}">Next »</a>
+    {% endif %}
+</p>
+{% endif %}
 
 {% endblock %}
