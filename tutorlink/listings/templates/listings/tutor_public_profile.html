@@ -59,5 +59,26 @@ Tutor Profile
         {% endfor %}
     </table>
 
+    <h2>Reviews</h2>
+    <table>
+        <tr><th>Rating</th><th>Class</th><th>From</th><th>Date</th></tr>
+        {% for r in recent_ratings %}
+        <tr>
+            <td>
+                {% for i in "12345" %}{% if forloop.counter <= r.stars %}★{% else %}☆{% endif %}{% endfor %}
+            </td>
+            <td>{{ r.package.enrolment_request.listing.get_subject_display }}</td>
+            <td>{{ r.rater.first_name }}</td>
+            <td>{{ r.created_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No ratings yet.</td></tr>
+        {% endfor %}
+    </table>
+
+    {% if ratings.count > 10 %}
+        <p>Showing the 10 most recent of {{ ratings.count }} ratings.</p>
+    {% endif %}
+
     <p><a href="{% url 'parent_listings_view' %}">« Back to listings</a></p>
 {% endblock %}
