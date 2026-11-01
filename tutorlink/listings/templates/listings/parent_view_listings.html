@@ -50,6 +50,7 @@
             <th>Mode</th>
             <th>Tutor</th>
             <th>Rating</th>
+            <th>Price check</th>
             <th>Action</th>
         </tr>
         {% for listing in page_obj %}
@@ -66,6 +67,14 @@
                 {% endif %}
             </td>
             <td>
+                {% if listing.price_verdict %}
+                    {{ listing.price_verdict }} (est. ${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr)
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+            <td>
                 <a href="{% url 'send_enrolment_request_view' listing.pk %}">
                     Send a request
                 </a>
@@ -79,6 +88,7 @@
         </tr>
         {% endfor %}
     </table>
+    <p>Price Check predicted using tutor specifics (model trained on simulated data)</p>
 
 {% if page_obj.paginator.num_pages > 1 %}
 <p class="pagination">
