@@ -3,101 +3,102 @@
 {% block title %}Available Listings{% endblock %}
 
 {% block header %}
-    Available listings
+Available listings
 {% endblock %}
 
 {% block content %}
-    <form method="get" class="filters">
-        <select name="subject">
-            <option value="">Any subject</option>
-            {% for value, label in subject_choices %}
-                <option value="{{ value }}" {% if selected.subject == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-
-        <select name="level">
-            <option value="">Any level</option>
-            {% for value, label in level_choices %}
-                <option value="{{ value }}" {% if selected.level == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-
-        <select name="weekday">
-            <option value="">Any day</option>
-            {% for value, label in weekday_choices %}
-                <option value="{{ value }}" {% if selected.weekday == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-
-        <select name="mode">
-            <option value="">Any mode</option>
-            {% for value, label in mode_choices %}
-                <option value="{{ value }}" {% if selected.mode == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-
-        <label>Max rate: $<span id="rate-value">{{ selected.max_rate|default:100 }}</span>/hr</label>
-        <input type="range" name="max_rate" min="10" max="100" step="5" value="{{ selected.max_rate|default:100 }}"
-            oninput="document.getElementById('rate-value').textContent = this.value">
-
-        <button type="submit">Filter</button>
-        <a href="{% url 'parent_listings_view' %}">Clear</a>
-    </form>
-    <table>
-        <tr>
-            <th>Listing</th>
-            <th>Rate</th>
-            <th>Mode</th>
-            <th>Tutor</th>
-            <th>Rating</th>
-            <th>Price check</th>
-            <th>Action</th>
-        </tr>
-        {% for listing in page_obj %}
-        <tr>
-            <td>{{ listing }} </td>
-            <td>${{ listing.rate_per_hour }}/hr</td>
-            <td>{{ listing.get_mode_display }}</td>
-            <td><a href="{% url 'tutor_public_profile_view' listing.tutor.pk %}">{{ listing.tutor.user.first_name }}</a></td>
-            <td>
-                {% if listing.rating_count %}
-                    {{ listing.avg_rating|floatformat:1 }} / 5 ({{ listing.rating_count }})
-                {% else %}
-                    No ratings yet
-                {% endif %}
-            </td>
-            <td>
-                {% if listing.price_verdict %}
-                    {{ listing.price_verdict }} (est. ${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr)
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-
-            <td>
-                <a href="{% url 'send_enrolment_request_view' listing.pk %}">
-                    Send a request
-                </a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6">
-                There are no available listings.
-            </td>
-        </tr>
+<form method="get" class="filters">
+    <select name="subject">
+        <option value="">Any subject</option>
+        {% for value, label in subject_choices %}
+        <option value="{{ value }}" {% if selected.subject == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
-    </table>
-    <p>Price Check predicted using tutor specifics (model trained on simulated data)</p>
+    </select>
+
+    <select name="level">
+        <option value="">Any level</option>
+        {% for value, label in level_choices %}
+        <option value="{{ value }}" {% if selected.level == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="weekday">
+        <option value="">Any day</option>
+        {% for value, label in weekday_choices %}
+        <option value="{{ value }}" {% if selected.weekday == value|stringformat:"s" %}selected{% endif %}>{{ label }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <select name="mode">
+        <option value="">Any mode</option>
+        {% for value, label in mode_choices %}
+        <option value="{{ value }}" {% if selected.mode == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Max rate: $<span id="rate-value">{{ selected.max_rate|default:100 }}</span>/hr</label>
+    <input type="range" name="max_rate" min="10" max="100" step="5" value="{{ selected.max_rate|default:100 }}"
+        oninput="document.getElementById('rate-value').textContent = this.value">
+
+    <button type="submit">Filter</button>
+    <a href="{% url 'parent_listings_view' %}">Clear</a>
+</form>
+<table>
+    <tr>
+        <th>Listing</th>
+        <th>Rate</th>
+        <th>Price check</th>
+        <th>Mode</th>
+        <th>Tutor</th>
+        <th>Rating</th>
+        <th>Action</th>
+    </tr>
+    {% for listing in page_obj %}
+    <tr>
+        <td>{{ listing }} </td>
+        <td>${{ listing.rate_per_hour }}/hr</td>
+        <td>
+            {% if listing.price_verdict %}
+            {{ listing.price_verdict }} (est. ${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr)
+            {% else %}
+            -
+            {% endif %}
+        </td>
+        <td>{{ listing.get_mode_display }}</td>
+        <td><a href="{% url 'tutor_public_profile_view' listing.tutor.pk %}">{{ listing.tutor.user.first_name }} {{ listing.tutor.user.last_name }}</a>
+        </td>
+        <td>
+            {% if listing.rating_count %}
+            {{ listing.avg_rating|floatformat:1 }} / 5 ({{ listing.rating_count }})
+            {% else %}
+            No ratings yet
+            {% endif %}
+        </td>
+        <td>
+            <a href="{% url 'send_enrolment_request_view' listing.pk %}">
+                Send a request
+            </a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">
+            There are no available listings.
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<p>Price Check predicted using tutor specifics (model trained on simulated data)</p>
 
 {% if page_obj.paginator.num_pages > 1 %}
 <p class="pagination">
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">« Prev</a>
+    <a href="?page={{ page_obj.previous_page_number }}&{{ querystring }}">« Prev</a>
     {% endif %}
     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}&{{ querystring }}">Next »</a>
+    <a href="?page={{ page_obj.next_page_number }}&{{ querystring }}">Next »</a>
     {% endif %}
 </p>
 {% endif %}

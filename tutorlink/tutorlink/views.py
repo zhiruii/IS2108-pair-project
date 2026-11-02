@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from enrolments.models import Lesson, EnrolmentRequest
+from enrolments.models import Lesson, EnrolmentRequest, Package
 from enrolments.utils import expire_overdue_requests
 from django.utils import timezone
 
@@ -28,7 +28,15 @@ def index(request):
             status="PENDING"
         ).count()
         
-        context={'next_lesson': next_lesson, 'to_pay': to_pay, 'pending_count': pending_count}
+        to_rate = Package.objects.filter(
+            enrolment_request__child__parent=request.user,
+        ).exclude(
+            lessons__status="SCHEDULED" # exclude if still have lessons left
+        ).exclude(
+            ratings__rater=request.user # already rated
+        ).select_related("enrolment_request__listing", "enrolment_request__child__parent")
+        
+        context={'next_lesson': next_lesson, 'to_pay': to_pay, 'pending_count': pending_count, 'to_rate': to_rate}
 
     elif request.user.is_authenticated and request.user.role == "TUTOR":
         expire_overdue_requests()
@@ -49,7 +57,15 @@ def index(request):
             listing__tutor__user=request.user,         # requests on this tutor's listings
             status="PENDING"
         ).count()
+        
+        to_rate = Package.objects.filter(
+            enrolment_request__listing__tutor__user=request.user,
+        ).exclude(
+            lessons__status="SCHEDULED" # exclude if still have lessons left
+        ).exclude(
+            ratings__rater=request.user # already rated
+        ).select_related("enrolment_request__listing__tutor__user", "enrolment_request__child")
 
-        context = {"next_lesson": next_lesson, "to_mark": to_mark, "request_count": request_count} 
+        context = {"next_lesson": next_lesson, "to_mark": to_mark, "request_count": request_count, "to_rate": to_rate} 
     
     return render(request, 'index.html', context)

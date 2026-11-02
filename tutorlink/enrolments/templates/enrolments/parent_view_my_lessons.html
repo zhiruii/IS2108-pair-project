@@ -43,14 +43,16 @@ My Lessons
         <th>Action</th> <!-- reschedule req later-->
     </tr>
     {% for lesson in upcoming_lessons %}
+    {% with req=lesson.package.enrolment_request %}
     <tr>
         <td>{{ lesson.date|date:"D d M Y" }}</td>
         <td>{{ lesson.start_time|time:"H:i" }} - {{ lesson.end_time|time:"H:i" }}</td>
         <td>{{ lesson.package.enrolment_request.child }}</td>
-        <td>{{ lesson.package.enrolment_request.listing.tutor.user.first_name }}</td>
+        <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }} {{ req.listing.tutor.user.last_name }}</a></td>
         <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
         <td>Reschedule</td>
     </tr>
+    {% endwith %}
     {% empty %}
     <tr>
         <td colspan="6">
@@ -78,7 +80,7 @@ My Lessons
         <td>{{ lesson.date|date:"D d M Y" }}</td>
         <td>{{ lesson.start_time|time:"H:i" }}–{{ lesson.end_time|time:"H:i" }}</td>
         <td>{{ req.child }}</td>
-        <td>{{ req.listing.tutor.user.first_name }}</td>
+        <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }} {{ req.listing.tutor.user.last_name }}</a></td>
         <td>{{ req.listing.get_subject_display }}</td>
         <td>{{ lesson.get_status_display }}</td>
     </tr>

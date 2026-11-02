@@ -15,6 +15,7 @@
             <th>Listing</th>
             <th>Child name</th>
             <th>Child parent</th>
+            <th>Parent rating</th>
             <th>Requested date</th>
             <th>Message</th>
             <th>Sent</th>
@@ -25,6 +26,13 @@
             <td>{{ r.listing }}</td>
             <td>{{ r.child }}</td>
             <td>{{ r.child.parent.first_name }} {{ r.child.parent.last_name }}</td>
+            <td>
+                {% if r.parent_count %}
+                    ★ {{ r.parent_avg|floatformat:1 }} ({{ r.parent_count }})
+                {% else %}
+                    No ratings yet
+                {% endif %}
+            </td>
             <td>{{ r.start_date }}</td>
             <td>{{ r.message|default:"-" }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
@@ -47,7 +55,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 You have no pending requests.
             </td>
         </tr>

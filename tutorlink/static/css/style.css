@@ -389,3 +389,30 @@ img.avatar {
     object-fit: cover;
     background: none;
 }
+
+/* ---------- Star rating input ---------- */
+.star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse;   /* DOM is 5..1, so flip it to show 1..5 */
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.star-rating input {
+    display: none;                 /* hide the radio circles */
+}
+
+.star-rating label {
+    font-size: 2rem;
+    color: var(--line);            /* empty star: pale grey-green */
+    cursor: pointer;
+    margin: 0;
+}
+
+/* the clicked star + every star after it in the DOM (= the lower stars) */
+.star-rating input:checked ~ label,
+/* hovering previews the same way */
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: var(--ink);
+}

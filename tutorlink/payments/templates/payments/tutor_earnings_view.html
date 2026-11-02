@@ -38,7 +38,7 @@ Your Earnings
         <td>{{ lesson.completed_at|date:"d D M Y"}}</td>
         <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
         <td>{{ lesson.package.enrolment_request.child }}</td>
-        <td>{{ lesson.price }}</td>
+        <td>${{ lesson.price }}</td>
         <td>${{ lesson.commission }}</td>
         <td>${{ lesson.tutor_amount }}</td>
     </tr>
