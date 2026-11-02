@@ -11,7 +11,13 @@
 
     <form method="post">
         {% csrf_token %}
-        {{ form }}
+        <div class="star-rating">
+            {% for i in "54321" %} <!--CSS can only style elements that come after the checked one.-->
+                <input type="radio" id="star{{ i }}" name="stars" value="{{ i }}" required>
+                <label for="star{{ i }}" title="{{ i }} star{{ i|pluralize }}">★</label>
+            {% endfor %}
+        </div>
+        {{ form.stars.errors }}
         <button type="submit">Submit rating</button>
         <a href="{% url 'my_ratings' %}" class="btn btn-outline">Cancel</a>
     </form>

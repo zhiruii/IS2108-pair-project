@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Count, Q
 from enrolments.utils import expire_overdue_requests
 from ml.predict import ranges_for_listings, verdict, VERDICT_LABELS
-
+from django.contrib import messages
+from django.utils import timezone
 
 from django.core.paginator import Paginator
 
@@ -161,8 +162,18 @@ def close_listing_view(request, pk):
         return redirect("tutor_profile_create")
     listing = get_object_or_404(Listing, pk=pk, tutor=profile)
     if request.method == "POST":
+        if listing.status != 'OPEN':
+            messages.error(request, "You can only close an open listing. This one has a parent paying or booked lessons.")
+            return redirect("tutor_listings_view")
+        # decline everyone still waiting on this listing
+        listing.enrolment_requests.filter(status="PENDING").update(
+            status="DECLINED",
+            decided_at=timezone.now(),
+            decline_reason="The tutor closed this listing.",
+        )
         listing.status = "CLOSED"
         listing.save()
+        messages.success(request, "You have successfully closed this listing.")
     return redirect("tutor_listings_view")
 
 

@@ -29,6 +29,15 @@
                 <span class="stat-number">{{ pending_count }}</span>
                 <a href="{% url 'parent_my_requests_view' %}">View</a>
             </div>
+            <div class="stat">
+                <span class="stat-label">To review</span>
+                <span class="stat-number">{{ to_rate|length }}</span>
+                {% if to_rate %}
+                    Finished packages waiting for your review.
+                {% else %}
+                    All caught up.
+                {% endif %}
+            </div>
         </div>
 
         {% if to_pay %}
@@ -47,6 +56,28 @@
                     <td>{{ r.pay_by|timeuntil }}</td>
                     <td><a class="btn" href="{% url 'parent_pay_view' r.pk %}">Pay now</a></td>
                 </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+
+        {% if to_rate %}
+            <h2>Awaiting review</h2>
+            <table>
+                <tr>
+                    <th>Child</th>
+                    <th>Tutor</th>
+                    <th>Listing</th>
+                    <th></th>
+                </tr>
+                {% for r in to_rate %}
+                {% with req=r.enrolment_request %}
+                <tr>
+                    <td>{{ req.child.first_name }}</td>
+                    <td>{{ req.listing.tutor.user.first_name }} {{ req.listing.tutor.user.last_name }}</td>
+                    <td>{{ req.listing }}</td>
+                    <td><a class="btn" href="{% url 'rate_package' r.pk %}">Review</a></td>
+                </tr>
+                {% endwith %}
                 {% endfor %}
             </table>
         {% endif %}
@@ -81,6 +112,33 @@
                 <span class="stat-number">{{ request_count }}</span>
                 <a href="{% url 'tutor_requests_view' %}">View</a>
             </div>
+            <div class="stat">
+                <span class="stat-label">To rate</span>
+                <span class="stat-number">{{ to_rate|length }}</span>
+                {% if to_rate %}Finished packages waiting for your rating.{% else %}All caught up.{% endif %}
+            </div>
         </div>
+
+        {% if to_rate %}
+            <h2>Rate your finished packages</h2>
+            <table>
+                <tr>
+                    <th>Parent</th>
+                    <th>Subject</th>
+                    <th>Listing</th>
+                    <th></th>
+                </tr>
+                {% for p in to_rate %}
+                {% with req=p.enrolment_request %}
+                <tr>
+                    <td>{{ req.child.parent.first_name }} {{ req.child.parent.last_name }}</td>
+                    <td>{{ req.listing.get_subject_display }}</td>
+                    <td>{{ req.listing }}</td>
+                    <td><a class="btn" href="{% url 'rate_package' p.pk %}">Rate</a></td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+            </table>
+        {% endif %}
     {% endif %}
 {% endblock %}

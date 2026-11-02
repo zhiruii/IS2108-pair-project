@@ -15,7 +15,7 @@
             <th>Child</th>
             <th>Action</th>
         </tr>
-        {% for p in to_rate %}
+        {% for p in to_rate_page %}
         <tr>
             <td>{{ p.enrolment_request.listing }}</td>
             <td>
@@ -31,6 +31,18 @@
         {% endfor %}
     </table>
 
+    {% if to_rate_page.paginator.num_pages > 1 %}
+    <p class="pagination">
+        {% if to_rate_page.has_previous %}
+            <a href="?to_rate_page={{ to_rate_page.previous_page_number }}&received_page={{ received_page.number }}&given_page={{ given_page.number }}">« Prev</a>
+        {% endif %}
+        Page {{ to_rate_page.number }} of {{ to_rate_page.paginator.num_pages }}
+        {% if to_rate_page.has_next %}
+            <a href="?to_rate_page={{ to_rate_page.next_page_number }}&received_page={{ received_page.number }}&given_page={{ given_page.number }}">Next »</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
     <h2>Ratings I received</h2>
     {% if average %}
         <p>Average: {{ average|floatformat:1 }} / 5</p>
@@ -44,7 +56,7 @@
             <th>Date</th>
             <th>Actions</th>
         </tr>
-        {% for r in received %}
+        {% for r in received_page %}
         <tr>
             <td>{{ r.rater.first_name }}</td>
             <td>{{ r.package.enrolment_request.listing }}</td>
@@ -67,6 +79,18 @@
         {% endfor %}
     </table>
 
+    {% if received_page.paginator.num_pages > 1 %}
+    <p class="pagination">
+        {% if received_page.has_previous %}
+            <a href="?received_page={{ received_page.previous_page_number }}&given_page={{ given_page.number }}&to_rate_page={{ to_rate_page.number }}">« Prev</a>
+        {% endif %}
+        Page {{ received_page.number }} of {{ received_page.paginator.num_pages }}
+        {% if received_page.has_next %}
+            <a href="?received_page={{ received_page.next_page_number }}&given_page={{ given_page.number }}&to_rate_page={{ to_rate_page.number }}">Next »</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
     <h2>Ratings I gave</h2>
     <table>
         <tr>
@@ -76,7 +100,7 @@
             <th>Stars</th>
             <th>Date</th>
         </tr>
-        {% for r in given %}
+        {% for r in given_page %}
         <tr>
             <td>
                 {% if r.rated_tutor %}{{ r.rated_tutor.user.first_name }}{% else %}{{ r.rated_parent.first_name }}{% endif %}
@@ -92,6 +116,19 @@
         </tr>
         {% endfor %}
     </table>
+
+    {% if given_page.paginator.num_pages > 1 %}
+    <p class="pagination">
+        {% if given_page.has_previous %}
+            <a href="?given_page={{ given_page.previous_page_number }}&received_page={{ received_page.number }}&to_rate_page={{ to_rate_page.number }}">« Prev</a>
+        {% endif %}
+        Page {{ given_page.number }} of {{ given_page.paginator.num_pages }}
+        {% if given_page.has_next %}
+            <a href="?given_page={{ given_page.next_page_number }}&received_page={{ received_page.number }}&to_rate_page={{ to_rate_page.number }}">Next »</a>
+        {% endif %}
+    </p>
+    {% endif %}
+
 {% endblock %}
 
 

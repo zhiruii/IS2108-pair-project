@@ -6,6 +6,7 @@ from enrolments.models import Package
 from .forms import RatingForm, DisputeForm
 from .models import Rating, Dispute
 from django.db.models import Avg
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -34,7 +35,7 @@ def rate_package_view(request, package_id):
         form = RatingForm(request.POST, instance=rating)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Thank you for your rating')
+            messages.success(request, 'Thank you for your rating!')
             return redirect('my_ratings')
     else:
         form = RatingForm(instance=rating)
@@ -57,7 +58,17 @@ def my_ratings_view(request):
     received = received.order_by('-created_at')
     average = received.aggregate(Avg('stars'))['stars__avg']
 
-    return render(request, 'ratings/my_ratings.html', {'given': given, 'received': received, 'average': average, 'to_rate': to_rate})
+    to_rate = to_rate.order_by("-id") 
+    to_rate_page = Paginator(to_rate, 5).get_page(request.GET.get("to_rate_page"))
+    received_page = Paginator(received, 10).get_page(request.GET.get("received_page"))
+    given_page = Paginator(given, 10).get_page(request.GET.get("given_page"))
+    
+    return render(request,
+                  'ratings/my_ratings.html',
+                  {'average': average,
+                   'to_rate_page': to_rate_page,
+                   'received_page': received_page,
+                   'given_page': given_page})
 
 @login_required
 def dispute_rating_view(request, rating_id):

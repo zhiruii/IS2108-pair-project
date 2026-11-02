@@ -20,7 +20,7 @@
         {% for r in active_requests %}
         <tr>
             <td>{{ r.listing }}</td>
-            <td>{{ r.listing.tutor.user.first_name }}</td>
+            <td><a href="{% url 'tutor_public_profile_view' r.listing.tutor.pk %}">{{ r.listing.tutor.user.first_name }} {{ r.listing.tutor.user.last_name }}</a></td>
             <td>{{ r.child }}</td>
             <td>{{ r.get_status_display }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
@@ -53,7 +53,7 @@
         {% for r in past_page %}
         <tr>
             <td>{{ r.listing }}</td>
-            <td>{{ r.listing.tutor.user.first_name }}</td>
+            <td><a href="{% url 'tutor_public_profile_view' r.listing.tutor.pk %}">{{ r.listing.tutor.user.first_name }} {{ r.listing.tutor.user.last_name }}</a></td>
             <td>{{ r.child }}</td>
             <td>{{ r.get_status_display }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>

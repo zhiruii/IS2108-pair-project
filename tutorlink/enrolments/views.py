@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from listings.models import Listing
 from accounts.models import Child
 from .models import EnrolmentRequest, Lesson
@@ -8,7 +9,7 @@ from django.utils import timezone
 from datetime import timedelta
 from .utils import expire_overdue_requests
 from django.core.paginator import Paginator
-
+from django.db.models import Avg, Count
 
 # Create your views here.
 @login_required
@@ -91,7 +92,10 @@ def tutor_requests_view(request):
 
     pending_requests = EnrolmentRequest.objects.filter(
         listing__tutor__user=request.user, status="PENDING"
-    ).order_by("-created_at")
+    ).annotate(
+        parent_avg=Avg("child__parent__ratings_received__stars"),
+        parent_count=Count("child__parent__ratings_received"),
+    ).select_related("listing", "child__parent").order_by("-created_at")
 
     # Only show one listing's requests when ?listing=<pk> is in the URL
     selected_listing = None
@@ -254,5 +258,9 @@ def tutor_complete_lesson_view(request, pk):
         if not remaining:
             lesson.package.status = "COMPLETED"
             lesson.package.save()
+            messages.success(
+                request, 
+                "That was the last lesson of this package. You can now rate the parent on your home page."
+            )
 
     return redirect("tutor_view_my_schedule")
