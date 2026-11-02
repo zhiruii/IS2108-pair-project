@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Predict how much to charge{% endblock %}
+
+{% block header %}
+    Predict how much to charge
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Predict</button>
+    </form>
+    {% if suggestion %}
+        <p>Estimated range (illustrative, based on simulated data): ${{ suggestion.0 }}–${{ suggestion.1 }}/hr</p>
+    {% endif %}
+{% endblock %}
+
