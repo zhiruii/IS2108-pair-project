@@ -1,21 +1,37 @@
 {% extends 'base.html' %}
 
+{% block title %}My children{% endblock %}
+
 {% block header %}
     My Children
 {% endblock %}
 
 {% block content %}
-    <a href="{% url 'child_create' %}">Add a child</a>
-    <ul>
-    {% for child in children %}
-        <li>
-            <!--child.get_level_display() to show Primary 4 instead of P4-->
-            {{ child.first_name }} {{ child.last_name }} ({{ child.get_level_display }})
-            <a href="{% url 'child_edit' child.id %}">Edit</a>
-            <a href="{% url 'child_delete' child.id %}">Delete</a>
-        </li>
-    {% empty %}
-        <li>No children yet.</li>
-    {% endfor %}
-    </ul>
+    <div class="page-actions">
+        <p>Manage your children's profiles. Each child can be enrolled with tutors separately.</p>
+        <a class="btn" href="{% url 'child_create' %}">+ Add a child</a>
+    </div>
+
+    <div class="card-grid">
+        {% for child in children %}
+        <div class="child-card">
+            <div class="avatar">{{ child.first_name|first }}{{ child.last_name|first }}</div>
+            <div class="child-info">
+                <h3>{{ child.first_name }} {{ child.last_name }}</h3>
+                <p>{{ child.get_level_display }}</p>
+            </div>
+            <div class="child-actions">
+                <a href="{% url 'parent_view_my_lessons' %}?child={{ child.pk }}">View lessons</a>
+                <a class="btn btn-outline" href="{% url 'child_edit' child.id %}">Edit</a>
+                <a class="btn btn-danger" href="{% url 'child_delete' child.id %}">Delete</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>You haven't added any children yet.</p>
+            <p>Add a child to start requesting lessons with tutors.</p>
+            <a class="btn" href="{% url 'child_create' %}">+ Add your first child</a>
+        </div>
+        {% endfor %}
+    </div>
 {% endblock %}
