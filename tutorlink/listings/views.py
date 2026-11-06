@@ -103,6 +103,12 @@ def tutor_listings_view(request):
     paginator = Paginator(listings, 10)
     page_number = request.GET.get("page")
     listings_page = paginator.get_page(page_number)
+    page_listings = list(listings_page)
+    ranges = ranges_for_listings(page_listings)
+    for i, listing in enumerate(page_listings):
+        listing.price_range = ranges[i]
+        listing.price_verdict = VERDICT_LABELS.get(verdict(listing.rate_per_hour, ranges[i]))
+
 
     return render(
         request,
