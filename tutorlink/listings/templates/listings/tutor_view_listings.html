@@ -30,20 +30,16 @@
             <td>{{ listing }}</td>
             <td>${{ listing.rate_per_hour}}/hr</td>
             
-            <td>
-                {% if listing.price_range %}
-                    ${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr {{ listing.price_verdict|default:"" }}
-                {% else %}
-                    -
-                {% endif %}
-                {% if listing.price_flag %}
-                    <br>Staff flagged this rate: {{ listing.price_flag.note|default:"please check it" }}
-                    <form method="post" action="{% url 'price_flag_dismiss' listing.pk %}">
-                        {% csrf_token %}
-                        <button type="submit">Dismiss</button>
-                    </form>
-                {% endif %}
-            </td>
+        <td>
+            {% if listing.price_range %}
+                ${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr {{ listing.price_verdict|default:"" }}
+            {% else %}
+                -
+            {% endif %}
+            {% if listing.price_flag %}
+                <br>Staff flagged this rate: {{ listing.price_flag.note|default:"please check it" }}
+            {% endif %}
+        </td>
 
             <td>
                 {% if listing.status == "OPEN" %}
@@ -59,17 +55,21 @@
                 {% endif %}
             </td>
             <td>{{ listing.get_status_display }}</td>
-            <td>
-                {% if listing.status == "OPEN" %}
+        <td>
+            {% if listing.status == "OPEN" %}
                 <a href="{% url 'edit_listing_view' listing.pk %}">Edit</a>
-                {% if listing.status == "OPEN" %}
-                    <form method="post" action="{% url 'close_listing_view' listing.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" onclick="return confirm('Are you sure you want to close this listing? Any pending requests will be declined.')">Close</button>
-                    </form>
-                {% endif %}
-                {% endif %}
-            </td>
+                <form method="post" action="{% url 'close_listing_view' listing.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Are you sure you want to close this listing? Any pending requests will be declined.')">Close</button>
+                </form>
+            {% endif %}
+            {% if listing.price_flag %}
+                <form method="post" action="{% url 'price_flag_dismiss' listing.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-outline" onclick="return confirm('Dismiss this flag?')">Dismiss</button>
+                </form>
+            {% endif %}
+        </td>
         </tr>
         {% empty %}
         <tr>
