@@ -117,7 +117,42 @@
                 <span class="stat-number">{{ to_rate|length }}</span>
                 {% if to_rate %}Finished packages waiting for your rating.{% else %}All caught up.{% endif %}
             </div>
+            <div class="stat">
+                <span class="stat-label">Flagged listings</span>
+                <span class="stat-number">{{ flagged|length }}</span>
+                {% if flagged %}Listings flagged for review.{% else %}All clear.{% endif %}
+            </div>
         </div>
+
+        {% if flagged %}
+            <h2>Flagged by staff</h2>
+            <table>
+                <tr>
+                    <th>Listing</th>
+                    <th>Your rate</th>
+                    <th>Flag reason</th>
+                    <th></th>
+                </tr>
+                {% for l in flagged %}
+                <tr>
+                    <td>{{ l }}</td>
+                    <td>${{ l.rate_per_hour }}</td>
+                    <td>{{ l.price_flag.note|default:"Please check this rate." }}</td>
+                    <td>
+                        <a class="btn" href="{% url 'edit_listing_view' l.pk %}">Edit</a>
+                        <form method="post" action="{% url 'price_flag_dismiss' l.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'index' %}">
+                            <button type="submit" class="btn-outline" onclick="return confirm('Dismiss this flag? Staff will no longer see it as flagged.')">
+                                Dismiss
+                            </button>
+                        </form>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
 
         {% if to_rate %}
             <h2>Rate your finished packages</h2>
@@ -140,5 +175,6 @@
                 {% endfor %}
             </table>
         {% endif %}
+
     {% endif %}
 {% endblock %}

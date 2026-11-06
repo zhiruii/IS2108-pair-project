@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from enrolments.models import Lesson, EnrolmentRequest, Package
 from enrolments.utils import expire_overdue_requests
+from listings.models import Listing
 from django.utils import timezone
 
 def index(request):
@@ -66,6 +67,11 @@ def index(request):
             ratings__rater=request.user # already rated
         ).select_related("enrolment_request__listing__tutor__user", "enrolment_request__child")
 
-        context = {"next_lesson": next_lesson, "to_mark": to_mark, "request_count": request_count, "to_rate": to_rate} 
+        flagged = Listing.objects.filter(
+            tutor__user=request.user,
+            price_flag__isnull=False,
+        ).exclude(status="CLOSED").select_related("price_flag")
+        
+        context = {"next_lesson": next_lesson, "to_mark": to_mark, "request_count": request_count, "to_rate": to_rate, "flagged": flagged}
     
     return render(request, 'index.html', context)
