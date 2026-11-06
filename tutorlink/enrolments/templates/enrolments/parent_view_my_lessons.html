@@ -40,7 +40,6 @@ My Lessons
         <th>Child</th>
         <th>Tutor</th>
         <th>Subject</th>
-        <th>Action</th> <!-- reschedule req later-->
     </tr>
     {% for lesson in upcoming_lessons %}
     {% with req=lesson.package.enrolment_request %}
@@ -50,12 +49,11 @@ My Lessons
         <td>{{ lesson.package.enrolment_request.child }}</td>
         <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }} {{ req.listing.tutor.user.last_name }}</a></td>
         <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
-        <td>Reschedule</td>
     </tr>
     {% endwith %}
     {% empty %}
     <tr>
-        <td colspan="6">
+        <td colspan="5">
             You have no upcoming lessons.
         </td>
     </tr>

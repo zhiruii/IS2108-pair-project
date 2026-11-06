@@ -26,6 +26,7 @@
             <td class="navbar">
                 <nav>
                     <h3>Menu</h3>
+                    {% with current=request.resolver_match.url_name %}
                     <ul>
 
                         <a href="{% url 'index' %}" class="brand">
@@ -34,32 +35,31 @@
                         </a>
                         {% if user.is_authenticated %}
                         {% if user.role == 'PARENT' %}
-                        <li><a href="{% url 'parent_profile' %}">My profile</a></li>
-                        <li><a href="{% url 'child_list' %}">My children</a></li>
-                        <li><a href="{% url 'parent_view_my_lessons' %}">My Lessons</a></li>
-                        <li><a href="{% url 'parent_listings_view' %}">View listings</a></li>
-                        <li><a href="{% url 'parent_my_requests_view' %}">My requests</a></li>
-                        <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
-                        <li><a href="{% url 'my_disputes' %}">My disputes</a></li>
-                        <li><a href="{% url 'parent_payment_history_view' %}">My payment history</a></li>
+                        <li><a href="{% url 'parent_profile' %}" class="{% if current == 'parent_profile' or current == 'parent_profile_edit' %}active{% endif %}">My profile</a></li>
+                        <li><a href="{% url 'child_list' %}" class="{% if current == 'child_list' or current == 'child_create' or current == 'child_edit' or current == 'child_delete' %}active{% endif %}">My children</a></li>
+                        <li><a href="{% url 'parent_view_my_lessons' %}" class="{% if current == 'parent_view_my_lessons' %}active{% endif %}">My Lessons</a></li>
+                        <li><a href="{% url 'parent_listings_view' %}" class="{% if current == 'parent_listings_view' or current == 'send_enrolment_request_view' or current == 'tutor_public_profile_view' %}active{% endif %}">View listings</a></li>
+                        <li><a href="{% url 'parent_my_requests_view' %}" class="{% if current == 'parent_my_requests_view' or current == 'parent_withdraw_request_view' or current == 'parent_pay_view' or current == 'parent_payment_view' %}active{% endif %}">My requests</a></li>
+                        <li><a href="{% url 'my_ratings' %}" class="{% if current == 'my_ratings' or current == 'rate_package' or current == 'dispute_rating' %}active{% endif %}">My ratings</a></li>
+                        <li><a href="{% url 'my_disputes' %}" class="{% if current == 'my_disputes' %}active{% endif %}">My disputes</a></li>
+                        <li><a href="{% url 'parent_payment_history_view' %}" class="{% if current == 'parent_payment_history_view' or current == 'payment_success_view' %}active{% endif %}">My payment history</a></li>
 
                         {% elif user.role == 'TUTOR' %}
-                        <li><a href="{% url 'tutor_profile' %}">My profile</a></li>
-                        <li><a href="{% url 'tutor_listings_view' %}">My listings</a></li>
-                        <li><a href="{% url 'tutor_view_my_schedule' %}">My schedule</a></li>
-                        <li><a href="{% url 'tutor_requests_view' %}">My pending requests</a></li>
-                        <li><a href="{% url 'my_ratings' %}">My ratings</a></li>
-                        <li><a href="{% url 'my_disputes' %}">My disputes</a></li>
-                        <li><a href="{% url 'tutor_earnings_view' %}">My earnings</a></li>
-                        <li><a href="{% url 'price_suggestion' %}">Predict how much to charge</a></li>
+                        <li><a href="{% url 'tutor_profile' %}" class="{% if current == 'tutor_profile' or current == 'tutor_profile_edit' or current == 'tutor_profile_create' %}active{% endif %}">My profile</a></li>
+                        <li><a href="{% url 'tutor_listings_view' %}" class="{% if current == 'tutor_listings_view' or current == 'create_listing_view' or current == 'edit_listing_view' %}active{% endif %}">My listings</a></li>
+                        <li><a href="{% url 'tutor_view_my_schedule' %}" class="{% if current == 'tutor_view_my_schedule' %}active{% endif %}">My schedule</a></li>
+                        <li><a href="{% url 'tutor_requests_view' %}" class="{% if current == 'tutor_requests_view' or current == 'tutor_decline_request_view' %}active{% endif %}">My pending requests</a></li>
+                        <li><a href="{% url 'my_ratings' %}" class="{% if current == 'my_ratings' or current == 'rate_package' or current == 'dispute_rating' %}active{% endif %}">My ratings</a></li>
+                        <li><a href="{% url 'my_disputes' %}" class="{% if current == 'my_disputes' %}active{% endif %}">My disputes</a></li>
+                        <li><a href="{% url 'tutor_earnings_view' %}" class="{% if current == 'tutor_earnings_view' %}active{% endif %}">My earnings</a></li>
+                        <li><a href="{% url 'price_suggestion' %}" class="{% if current == 'price_suggestion' %}active{% endif %}">Predict how much to charge</a></li>
 
                         {% elif user.role == 'STAFF' %}
-                        <li><a href="{% url 'admin_home' %}">Admin panel</a></li>
-                        <li><a href="{% url 'admin_user_list' %}">Users</a></li>
-                        <li><a href="{% url 'admin_rating_list' %}">Ratings</a></li>
-                        <li><a href="{% url 'admin_dispute_list' %}">Disputes</a></li>
-                        <li><a href="{% url 'price_review' %}">Price review</a></li>
-
+                        <li><a href="{% url 'admin_home' %}" class="{% if current == 'admin_home' %}active{% endif %}">Admin panel</a></li>
+                        <li><a href="{% url 'admin_user_list' %}" class="{% if current == 'admin_user_list' or current == 'admin_user_edit' or current == 'admin_user_delete' %}active{% endif %}">Users</a></li>
+                        <li><a href="{% url 'admin_rating_list' %}" class="{% if current == 'admin_rating_list' or current == 'admin_rating_delete' %}active{% endif %}">Ratings</a></li>
+                        <li><a href="{% url 'admin_dispute_list' %}" class="{% if current == 'admin_dispute_list' or current == 'admin_dispute_resolve' %}active{% endif %}">Disputes</a></li>
+                        <li><a href="{% url 'price_review' %}" class="{% if current == 'price_review' or current == 'price_flag' %}active{% endif %}">Price review</a></li>
 
                         {% endif %}
                         <li>
@@ -69,10 +69,11 @@
                             </form>
                         </li>
                         {% else %}
-                        <li><a href="{% url 'login' %}">Log in</a></li>
-                        <li><a href="{% url 'signup' %}">Sign up</a></li>
+                        <li><a href="{% url 'login' %}" class="{% if current == 'login' %}active{% endif %}">Log in</a></li>
+                        <li><a href="{% url 'signup' %}" class="{% if current == 'signup' %}active{% endif %}">Sign up</a></li>
                         {% endif %}
                     </ul>
+                    {% endwith %}
                 </nav>
             </td>
             <td class="content">

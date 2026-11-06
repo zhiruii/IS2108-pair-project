@@ -116,6 +116,11 @@ a:hover {
     text-decoration: none;
 }
 
+.navbar li a.active {
+    background: var(--green-pale);
+    font-weight: 500;
+}
+
 .navbar li form {
     margin-top: 12px;
 }
@@ -476,4 +481,61 @@ img.avatar {
     border: 1px dashed var(--line);
     border-radius: var(--radius);
     color: var(--muted);
+}
+
+/* ---------- Landing hero ---------- */
+.hero {
+    text-align: center;
+    padding: 32px 16px 40px;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    margin: 16px 0 8px;
+}
+
+.hero h2 em {
+    color: var(--green-dark);
+    font-weight: 400;
+}
+
+.hero p {
+    color: var(--muted);
+    margin: 0 0 24px;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* whole logo bobs up and down */
+.hero-logo {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* leaf sways from its stem */
+.hero-logo .leaf {
+    transform-box: fill-box;          /* measure the origin from the leaf itself */
+    transform-origin: bottom left;    /* = where the stem meets the book */
+    animation: sway 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-6deg); }
+    50%      { transform: rotate(6deg); }
+}
+
+/* respect users who turn off motion in their OS settings */
+@media (prefers-reduced-motion: reduce) {
+    .hero-logo,
+    .hero-logo .leaf {
+        animation: none;
+    }
 }
