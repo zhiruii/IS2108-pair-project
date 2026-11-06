@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Flag listing{% endblock %}
+
+{% block header %}
+    Flag listing
+{% endblock %}
+
+{% block content %}
+    <p>{{ listing }}: ${{ listing.rate_per_hour }}/hr by {{ listing.tutor.user.first_name }}</p>
+    <p>The tutor will see a notice on their listings page asking them to review this rate.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Flag listing</button>
+        <a href="{% url 'price_review' %}">Cancel</a>
+    </form>
+{% endblock %}

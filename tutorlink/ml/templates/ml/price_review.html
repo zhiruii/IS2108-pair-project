@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Price review{% endblock %}
+
+{% block header %}
+    Price review
+{% endblock %}
+
+{% block content %}
+    <p>
+        Status:
+        <a href="?status=&dev={{ dev }}">All</a> |
+        <a href="?status=OPEN&dev={{ dev }}">Open</a> |
+        <a href="?status=RESERVED&dev={{ dev }}">Reserved</a> |
+        <a href="?status=FILLED&dev={{ dev }}">Filled</a>
+    </p>
+    <p>
+        Price:
+        <a href="?status={{ status }}&dev=">All</a> |
+        <a href="?status={{ status }}&dev=above">Above by {{ far_off }}%+</a> |
+        <a href="?status={{ status }}&dev=below">Below by {{ far_off }}%+</a> |
+        <a href="?status={{ status }}&dev=out">Out of range</a>
+    </p>
+    <p>Estimates are illustrative, based on simulated data.</p>
+
+    <table>
+        <tr>
+            <th>Listing</th>
+            <th>Tutor</th>
+            <th>Rating</th>
+            <th>Rate</th>
+            <th>Estimate</th>
+            <th>Difference</th>
+            <th>Verdict</th>
+            <th>Flag</th>
+            <th>Actions</th>
+        </tr>
+        {% for listing in listings %}
+        <tr>
+            <td>{{ listing }}</td>
+            <td>{{ listing.tutor.user.first_name }} ({{ listing.tutor.user.email }})</td>
+            <td>
+                {% if listing.avg_rating %}{{ listing.avg_rating|floatformat:1 }} / 5{% else %}No ratings yet{% endif %}
+            </td>
+            <td>${{ listing.rate_per_hour }}/hr</td>
+            <td>
+                {% if listing.price_range %}${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr{% else %}-{% endif %}
+            </td>
+            <td>
+                {% if listing.deviation is not None %}{{ listing.deviation|stringformat:"+d" }}%{% else %}-{% endif %}
+            </td>
+            <td>{{ listing.verdict_label|default:"-" }}</td>
+            <td>
+                {% if listing.price_flag %}
+                    Flagged{% if listing.verdict == 'FAIR' %} (back in range){% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if listing.price_flag %}
+                    <form method="post" action="{% url 'price_unflag' listing.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Clear flag</button>
+                    </form>
+                {% elif listing.verdict == 'BELOW' or listing.verdict == 'ABOVE' %}
+                    <a href="{% url 'price_flag' listing.id %}">Flag</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9">No listings match.</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
