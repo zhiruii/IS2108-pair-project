@@ -109,3 +109,16 @@ def price_unflag_view(request, listing_id):
         flag.delete()
         messages.success(request, 'Flag cleared')
     return redirect('price_review')
+
+@login_required
+def price_flag_tutor_dismiss_view(request, listing_id):
+    if request.user.role != 'TUTOR':
+        return redirect('index')
+    profile = TutorProfile.objects.filter(user=request.user).first()
+    if profile is None:
+        return redirect('tutor_profile_create')
+    # only the tutor's own listing, so nobody can dismiss someone else's flag
+    listing = get_object_or_404(Listing, pk=listing_id, tutor=profile)
+    if request.method == 'POST':
+        PriceFlag.objects.filter(listing=listing).delete()
+    return redirect('tutor_listings_view')

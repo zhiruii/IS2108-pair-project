@@ -20,6 +20,7 @@
         <tr>
             <th>Listing</th>
             <th>Rate</th>
+            <th>Estimate</th>
             <th>Requests</th>
             <th>Status</th>
             <th>Action</th>
@@ -28,6 +29,22 @@
         <tr>
             <td>{{ listing }}</td>
             <td>${{ listing.rate_per_hour}}/hr</td>
+            
+            <td>
+                {% if listing.price_range %}
+                    ${{ listing.price_range.0 }}–${{ listing.price_range.1 }}/hr {{ listing.price_verdict|default:"" }}
+                {% else %}
+                    -
+                {% endif %}
+                {% if listing.price_flag %}
+                    <br>Staff flagged this rate: {{ listing.price_flag.note|default:"please check it" }}
+                    <form method="post" action="{% url 'price_flag_dismiss' listing.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">Dismiss</button>
+                    </form>
+                {% endif %}
+            </td>
+
             <td>
                 {% if listing.status == "OPEN" %}
                     {% if listing.pending_count > 0 %}
@@ -56,7 +73,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">
+            <td colspan="6">
                 You have no listings yet.
             </td>
         </tr>

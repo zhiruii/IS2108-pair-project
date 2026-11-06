@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import price_suggestion_view, price_review_view, price_flag_view, price_unflag_view
+from .views import price_suggestion_view, price_review_view, price_flag_view, price_unflag_view, price_flag_tutor_dismiss_view
 
 
 urlpatterns = [
@@ -7,4 +7,6 @@ urlpatterns = [
     path('price-review/', price_review_view, name='price_review'),
     path('price-review/<int:listing_id>/flag/', price_flag_view, name='price_flag'),
     path('price-review/<int:listing_id>/unflag/', price_unflag_view, name='price_unflag'),
+    path('my-listings/<int:listing_id>/dismiss-flag/', price_flag_tutor_dismiss_view, name='price_flag_dismiss'),
+
 ]
