@@ -2,14 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from listings.models import Listing
-from accounts.models import Child
-from .models import EnrolmentRequest, Lesson
+from accounts.models import Child, User
+from .models import EnrolmentRequest, Lesson, Package
 from .forms import EnrolmentRequestForm
 from django.utils import timezone
 from datetime import timedelta
 from .utils import expire_overdue_requests
 from django.core.paginator import Paginator
 from django.db.models import Avg, Count
+
 
 # Create your views here.
 @login_required
@@ -90,12 +91,17 @@ def tutor_requests_view(request):
     if request.user.role != "TUTOR":
         return redirect("index")
 
-    pending_requests = EnrolmentRequest.objects.filter(
-        listing__tutor__user=request.user, status="PENDING"
-    ).annotate(
-        parent_avg=Avg("child__parent__ratings_received__stars"),
-        parent_count=Count("child__parent__ratings_received"),
-    ).select_related("listing", "child__parent").order_by("-created_at")
+    pending_requests = (
+        EnrolmentRequest.objects.filter(
+            listing__tutor__user=request.user, status="PENDING"
+        )
+        .annotate(
+            parent_avg=Avg("child__parent__ratings_received__stars"),
+            parent_count=Count("child__parent__ratings_received"),
+        )
+        .select_related("listing", "child__parent")
+        .order_by("-created_at")
+    )
 
     # Only show one listing's requests when ?listing=<pk> is in the URL
     selected_listing = None
@@ -113,7 +119,10 @@ def tutor_requests_view(request):
     return render(
         request,
         "enrolments/tutor_enrolment_requests_view.html",
-        {"pending_requests_page": pending_requests_page, "selected_listing": selected_listing},
+        {
+            "pending_requests_page": pending_requests_page,
+            "selected_listing": selected_listing,
+        },
     )
 
 
@@ -259,8 +268,42 @@ def tutor_complete_lesson_view(request, pk):
             lesson.package.status = "COMPLETED"
             lesson.package.save()
             messages.success(
-                request, 
-                "That was the last lesson of this package. You can now rate the parent on your home page."
+                request,
+                "That was the last lesson of this package. You can now rate the parent on your home page.",
             )
 
     return redirect("tutor_view_my_schedule")
+
+
+@login_required
+def parent_public_profile_view(request, pk):
+    if request.user.role != "TUTOR":
+        return redirect("index")
+
+    parent = get_object_or_404(User, pk=pk, role="PARENT")
+
+    # only tutors who this parent has sent a req to can see
+    if not EnrolmentRequest.objects.filter(
+        child__parent=parent, listing__tutor__user=request.user
+    ).exists():
+        return redirect("index")
+
+    ratings = parent.ratings_received.aggregate(avg=Avg("stars"), count=Count("id"))
+    recent_ratings = parent.ratings_received.select_related(
+        "rater", "package__enrolment_request__listing"
+    ).order_by("-created_at")[:10]
+
+    completed_count = Package.objects.filter(
+        enrolment_request__child__parent=parent, status="COMPLETED"
+    ).count()
+
+    return render(
+        request,
+        "enrolments/parent_public_profile.html",
+        {
+            "parent": parent,
+            "ratings": ratings,
+            "recent_ratings": recent_ratings,
+            "completed_count": completed_count,
+        },
+    )

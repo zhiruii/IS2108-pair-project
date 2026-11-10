@@ -8,7 +8,8 @@ from .views import (
     tutor_decline_request_view,
     parent_view_my_lessons,
     tutor_view_my_schedule,
-    tutor_complete_lesson_view
+    tutor_complete_lesson_view,
+    parent_public_profile_view,
 )
 
 urlpatterns = [
@@ -53,4 +54,9 @@ urlpatterns = [
         tutor_complete_lesson_view,
         name="tutor_complete_lesson_view"
     ),
+    path(
+        "parent-profile/<int:pk>/",
+        parent_public_profile_view,
+        name="parent_public_profile_view"
+    )
 ]

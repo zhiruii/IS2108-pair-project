@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ parent.get_full_name }}'s Profile{% endblock %}
+
+{% block header %}
+{{ parent.get_full_name }}'s Profile
+{% endblock %}
+
+{% block content %}
+<div class="profile-head">
+    {% if parent.avatar %}
+    <img class="avatar" src="{{ parent.avatar.url }}" alt="Profile photo">
+    {% else %}
+    <div class="avatar">{{ parent.first_name|first }}{{ parent.last_name|first }}</div>
+    {% endif %}
+    <div>
+        <h2>{{ parent.get_full_name }}</h2>
+        <p>
+            {% if ratings.count %}
+            ★ {{ ratings.avg|floatformat:1 }} ({{ ratings.count }} rating{{ ratings.count|pluralize }})
+            {% else %}
+            No ratings yet
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+    <h2>Details</h2>
+    <p>Member since: {{ parent.date_joined|date:"M Y" }}</p>
+    <p>Completed packages: {{ completed_count }}</p>
+
+    <h2>Reviews</h2>
+    <table>
+        <tr><th>Rating</th><th>Class</th><th>From</th><th>Date</th></tr>
+        {% for r in recent_ratings %}
+        <tr>
+            <td>
+                {% for i in "12345" %}{% if forloop.counter <= r.stars %}★{% else %}☆{% endif %}{% endfor %}
+            </td>
+            <td>{{ r.package.enrolment_request.listing.get_subject_display }}</td>
+            <td>{{ r.rater.get_full_name }}</td>
+            <td>{{ r.created_at|date:"d M Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No ratings yet.</td></tr>
+        {% endfor %}
+    </table>
+
+    {% if ratings.count > 10 %}
+        <p>Showing the 10 most recent of {{ ratings.count }} ratings.</p>
+    {% endif %}
+
+<a href="{% url 'tutor_requests_view' %}">Back to requests</a>
+{% endblock %}

@@ -49,7 +49,7 @@
                         <li><a href="{% url 'tutor_profile' %}" class="{% if current == 'tutor_profile' or current == 'tutor_profile_edit' or current == 'tutor_profile_create' %}active{% endif %}">My profile</a></li>
                         <li><a href="{% url 'tutor_listings_view' %}" class="{% if current == 'tutor_listings_view' or current == 'create_listing_view' or current == 'edit_listing_view' %}active{% endif %}">My listings</a></li>
                         <li><a href="{% url 'tutor_view_my_schedule' %}" class="{% if current == 'tutor_view_my_schedule' %}active{% endif %}">My schedule</a></li>
-                        <li><a href="{% url 'tutor_requests_view' %}" class="{% if current == 'tutor_requests_view' or current == 'tutor_decline_request_view' %}active{% endif %}">My pending requests</a></li>
+                        <li><a href="{% url 'tutor_requests_view' %}" class="{% if current == 'tutor_requests_view' or current == 'tutor_decline_request_view' or current == 'parent_public_profile_view' %}active{% endif %}">My pending requests</a></li>
                         <li><a href="{% url 'my_ratings' %}" class="{% if current == 'my_ratings' or current == 'rate_package' or current == 'dispute_rating' %}active{% endif %}">My ratings</a></li>
                         <li><a href="{% url 'my_disputes' %}" class="{% if current == 'my_disputes' %}active{% endif %}">My disputes</a></li>
                         <li><a href="{% url 'tutor_earnings_view' %}" class="{% if current == 'tutor_earnings_view' %}active{% endif %}">My earnings</a></li>
