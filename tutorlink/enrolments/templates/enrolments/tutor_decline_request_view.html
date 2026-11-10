@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    Listing: {{ enrolment_request.listing }} for {{ enrolment_request.child.parent }}'s child, {{ enrolment_request.child }} {{ enrolment_request.child.get_level_display }}
+    Listing: {{ enrolment_request.listing }} for {{ enrolment_request.child.parent.get_full_name }}'s child, {{ enrolment_request.child }} {{ enrolment_request.child.get_level_display }}
     <form method="post">
         {% csrf_token %}
         <textarea name="decline_reason" placeholder="Reason (optional)"></textarea>

@@ -51,7 +51,31 @@ class EnrolmentRequest(models.Model):
         if self.start_date is not None:
             if self.start_date <= timezone.localdate():
                 raise ValidationError({"start_date": "Start date must be after today."})
-
+            
+        # parent cannot send overlapping requests
+        if self.child_id is not None and self.listing_id is not None:
+            active = (
+                models.Q(status__in=["PENDING", "ACCEPTED"])
+                | models.Q(status="PAID", package__status="ACTIVE")
+            )
+            mine = EnrolmentRequest.objects.filter(
+                active, child=self.child).exclude(pk=self.pk)
+            
+            # 1. same child, same listing, still active
+            if mine.filter(listing=self.listing).exists():
+                raise ValidationError(
+                    {"child": f"{self.child.first_name} already has an active request for this listing."}
+                )
+            
+            # 2. same child, overlapping time on the same weekday
+            if mine.filter(
+                listing__weekday=self.listing.weekday,
+                listing__start_time__lt=self.listing.end_time,
+                listing__end_time__gt=self.listing.start_time,
+            ).exists():
+                raise ValidationError(
+                    {"child": f"{self.child.first_name} already has a lesson or a request at this time."}
+            )
 
 class Package(models.Model):
 
