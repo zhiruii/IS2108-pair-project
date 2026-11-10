@@ -23,6 +23,7 @@
         </tr>
 
         <tr>
+            {% block sidebar %}
             <td class="navbar">
                 <nav>
                     <h3>Menu</h3>
@@ -76,6 +77,7 @@
                     {% endwith %}
                 </nav>
             </td>
+            {% endblock %}
             <td class="content">
                 <main>
                     {% for m in messages %}

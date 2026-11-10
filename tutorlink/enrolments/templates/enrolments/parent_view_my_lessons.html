@@ -13,7 +13,9 @@ My Lessons
     <div class="stat">
         <span class="stat-label">Next lesson</span>
         <span class="stat-number">{{ next.date|date:"D d M" }}, {{ next.start_time|time:"H:i" }}</span>
-        <span>{{ next.package.enrolment_request.listing.get_subject_display }} with {{ next.package.enrolment_request.listing.tutor.user.first_name }} ({{ next.package.enrolment_request.child }})</span>
+        {% with req=next.package.enrolment_request %}
+            <span>{{ req.listing.get_subject_display }} with {{ req.listing.tutor.user.get_full_name }} ({{ req.child }}) · {{ req.listing.get_mode_display }}</span>
+        {% endwith %}
     </div>
 </div>
 {% endif %}
@@ -28,7 +30,7 @@ My Lessons
     Child:
     <a href="?{% if show %}show={{ show }}{% endif %}">All</a>
     {% for c in children %}
-        | <a href="?child={{ c.pk }}{% if show %}&show={{ show }}{% endif %}">{{ c.first_name }}</a>
+    | <a href="?child={{ c.pk }}{% if show %}&show={{ show }}{% endif %}">{{ c.first_name }}</a>
     {% endfor %}
 </p>
 {% if show != "past" %}
@@ -47,7 +49,8 @@ My Lessons
         <td>{{ lesson.date|date:"D d M Y" }}</td>
         <td>{{ lesson.start_time|time:"H:i" }} - {{ lesson.end_time|time:"H:i" }}</td>
         <td>{{ lesson.package.enrolment_request.child }}</td>
-        <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }} {{ req.listing.tutor.user.last_name }}</a></td>
+        <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }}
+                {{ req.listing.tutor.user.last_name }}</a></td>
         <td>{{ lesson.package.enrolment_request.listing.get_subject_display }}</td>
     </tr>
     {% endwith %}
@@ -78,7 +81,8 @@ My Lessons
         <td>{{ lesson.date|date:"D d M Y" }}</td>
         <td>{{ lesson.start_time|time:"H:i" }}–{{ lesson.end_time|time:"H:i" }}</td>
         <td>{{ req.child }}</td>
-        <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }} {{ req.listing.tutor.user.last_name }}</a></td>
+        <td><a href="{% url 'tutor_public_profile_view' req.listing.tutor.pk %}">{{ req.listing.tutor.user.first_name }}
+                {{ req.listing.tutor.user.last_name }}</a></td>
         <td>{{ req.listing.get_subject_display }}</td>
         <td>{{ lesson.get_status_display }}</td>
     </tr>
@@ -93,11 +97,15 @@ My Lessons
 {% if past_page.paginator.num_pages > 1 %}
 <p class="pagination">
     {% if past_page.has_previous %}
-        <a href="?page={{ past_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}{% if child_choice %}&child={{ child_choice }}{% endif %}">« Prev</a>
+    <a
+        href="?page={{ past_page.previous_page_number }}{% if show %}&show={{ show }}{% endif %}{% if child_choice %}&child={{ child_choice }}{% endif %}">«
+        Prev</a>
     {% endif %}
     Page {{ past_page.number }} of {{ past_page.paginator.num_pages }}
     {% if past_page.has_next %}
-        <a href="?page={{ past_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}{% if child_choice %}&child={{ child_choice }}{% endif %}">Next »</a>
+    <a
+        href="?page={{ past_page.next_page_number }}{% if show %}&show={{ show }}{% endif %}{% if child_choice %}&child={{ child_choice }}{% endif %}">Next
+        »</a>
     {% endif %}
 </p>
 {% endif %}

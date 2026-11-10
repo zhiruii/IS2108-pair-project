@@ -37,6 +37,14 @@ Available listings
         {% endfor %}
     </select>
 
+    <select name="min_rating">
+        <option value="">Any rating</option>
+        <option value="4.5" {% if selected.min_rating == "4.5" %}selected{% endif %}>4.5 ★ & up</option>
+        <option value="4" {% if selected.min_rating == "4" %}selected{% endif %}>4 ★ & up</option>
+        <option value="3" {% if selected.min_rating == "3" %}selected{% endif %}>3 ★ & up</option>
+        <option value="2" {% if selected.min_rating == "2" %}selected{% endif %}>2 ★ & up</option>
+    </select>
+
     <label>Max rate: $<span id="rate-value">{{ selected.max_rate|default:100 }}</span>/hr</label>
     <input type="range" name="max_rate" min="10" max="100" step="5" value="{{ selected.max_rate|default:100 }}"
         oninput="document.getElementById('rate-value').textContent = this.value">
