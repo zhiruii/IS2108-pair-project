@@ -15,13 +15,15 @@
     <div class="card-grid">
         {% for child in children %}
         <div class="child-card">
-            <div class="avatar">{{ child.first_name|first }}{{ child.last_name|first }}</div>
-            <div class="child-info">
-                <h3>{{ child.first_name }} {{ child.last_name }}</h3>
-                <p>{{ child.get_level_display }}</p>
+            <div class="child-head">
+                <div class="avatar">{{ child.first_name|first }}{{ child.last_name|first }}</div>
+                <div class="child-info">
+                    <h3>{{ child.first_name }} {{ child.last_name }}</h3>
+                    <p>{{ child.get_level_display }}</p>
+                    <a href="{% url 'parent_view_my_lessons' %}?child={{ child.pk }}">View lessons →</a>
+                </div>
             </div>
             <div class="child-actions">
-                <a href="{% url 'parent_view_my_lessons' %}?child={{ child.pk }}">View lessons</a>
                 <a class="btn btn-outline" href="{% url 'child_edit' child.id %}">Edit</a>
                 <a class="btn btn-danger" href="{% url 'child_delete' child.id %}">Delete</a>
             </div>

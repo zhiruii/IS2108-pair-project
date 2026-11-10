@@ -38,7 +38,7 @@
                     {% with req=next_lesson.package.enrolment_request %}
                         <span class="stat-number">{{ next_lesson.date|date:"D d M" }}</span>
                         {{ next_lesson.start_time|time:"H:i" }}–{{ next_lesson.end_time|time:"H:i" }}<br>
-                        {{ req.child.first_name }}: {{ req.listing.get_subject_display }} with {{ req.listing.tutor.user.first_name }}
+                        <span>{{ req.listing.get_subject_display }} with {{ req.listing.tutor.user.get_full_name }} ({{ req.child }}) · {{ req.listing.get_mode_display }}</span>
                     {% endwith %}
                 {% else %}
                     <span class="stat-number">—</span>
@@ -112,7 +112,7 @@
                     {% with req=next_lesson.package.enrolment_request %}
                         <span class="stat-number">{{ next_lesson.date|date:"D d M" }}</span>
                         {{ next_lesson.start_time|time:"H:i" }}–{{ next_lesson.end_time|time:"H:i" }}<br>
-                        {{ req.listing.get_subject_display }} with {{ req.child.first_name }}
+                        {{ req.listing.get_mode_display }} {{ req.listing.get_subject_display }} with {{ req.child.first_name }} (Parent: {{ req.child.parent.first_name }} {{ req.child.parent.last_name }})
                     {% endwith %}
                 {% else %}
                     <span class="stat-number">—</span>

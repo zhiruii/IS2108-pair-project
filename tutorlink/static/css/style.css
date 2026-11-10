@@ -436,20 +436,36 @@ img.avatar {
     color: var(--muted);
 }
 
+.page-actions .btn {
+    flex-shrink: 0;            /* don't let the long sentence squeeze the button */
+    white-space: nowrap;
+}
+
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
 }
 
 .child-card {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     background: white;
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 20px;
+}
+
+/* avatar on the left, name + level + link on the right */
+.child-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.child-head .avatar {
+    flex-shrink: 0;
 }
 
 .child-card h3 {
@@ -458,20 +474,25 @@ img.avatar {
 }
 
 .child-info p {
-    margin: 2px 0 0;
+    margin: 2px 0 4px;
     color: var(--muted);
+}
+
+.child-info a {
+    font-size: 0.9rem;
 }
 
 .child-actions {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
     gap: 8px;
     margin-top: auto;          /* keeps buttons at the bottom if cards differ in height */
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
 }
 
-.child-actions > a:first-child {
-    margin-right: auto;        /* "View lessons" on the left, buttons on the right */
+.child-actions .btn {
+    flex: 1;                   /* Edit and Delete share the row equally */
+    text-align: center;
 }
 
 .empty-state {

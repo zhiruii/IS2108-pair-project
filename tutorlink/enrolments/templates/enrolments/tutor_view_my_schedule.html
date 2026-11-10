@@ -7,6 +7,21 @@ My Schedule
 {% endblock %}
 
 {% block content %}
+{% with next=upcoming_lessons.first %}
+    {% if next %}
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-label">Next lesson</span>
+                <span class="stat-number">{{ next.date|date:"D d M" }}</span>
+                {{ next.start_time|time:"H:i" }}–{{ next.end_time|time:"H:i" }}<br>
+                {% with req=next.package.enrolment_request %}
+                    {{ req.listing.get_mode_display }} {{ req.listing.get_subject_display }} with {{ req.child.first_name }} (Parent: {{ req.child.parent.first_name }} {{ req.child.parent.last_name }})
+                {% endwith %}
+            </div>
+        </div>
+    {% endif %}
+
+{% endwith %}
 <p>
     Show:
     <a href="{% url 'tutor_view_my_schedule' %}">All</a> |
@@ -56,7 +71,6 @@ My Schedule
         <th>Mode</th>
         <th>Subject</th>
         <th>Status</th>
-        <th>Action</th>
     </tr>
     {% for lesson in past_page %}
     {% with req=lesson.package.enrolment_request %}
@@ -67,22 +81,21 @@ My Schedule
         <td>{{ req.child }}</td>
         <td>{{ req.listing.get_mode_display }}</td>
         <td>{{ req.listing.get_subject_display }}</td>
-        <td>{{ lesson.get_status_display }}</td>
         <td>
             {% if lesson.status == "SCHEDULED" %}
-            <form method="post" action="{% url 'tutor_complete_lesson_view' lesson.pk %}">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('Mark lesson as completed?')">Mark completed</button>
-            </form>
+                <form method="post" action="{% url 'tutor_complete_lesson_view' lesson.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Mark lesson as completed?')">Mark completed</button>
+                </form>
             {% else %}
-                -
+                {{ lesson.get_status_display }}
             {% endif %}
         </td>
     </tr>
     {% endwith %}
     {% empty %}
     <tr>
-        <td colspan="8">You have no past lessons.</td>
+        <td colspan="7">You have no past lessons.</td>
     </tr>
     {% endfor %}
 </table>
