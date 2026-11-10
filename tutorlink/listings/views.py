@@ -45,6 +45,10 @@ def parent_listings_view(request):
     if max_rate:
         listings = listings.filter(rate_per_hour__lte=max_rate)
     
+    min_rating = request.GET.get("min_rating")
+    if min_rating in ("2", "3", "4", "4.5"):
+        listings = listings.filter(avg_rating__gte=min_rating)
+    
     listings = list(listings.select_related("tutor__user"))
     ranges = ranges_for_listings(listings)
     for i, listing in enumerate(listings):

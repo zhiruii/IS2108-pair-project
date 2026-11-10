@@ -76,7 +76,7 @@ class Rating(models.Model):
             target = self.rated_tutor.user
         else:
             target = self.rated_parent
-        return f"{self.stars}/5 rating from {self.rater} to {target} (Package #{self.package_id})"
+        return f"{self.stars}/5 rating from {self.rater.first_name} {self.rater.last_name} to { target.get_full_name() } (Package #{self.package_id})"
 
 class Dispute(models.Model):
     STATUS_CHOICES = [

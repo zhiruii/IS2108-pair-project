@@ -4,8 +4,12 @@
     Welcome{% if user.is_authenticated %}, {{ user.first_name|default:user.email }}{% endif %}!
 {% endblock %}
 
+{% block sidebar %}
+    {% if user.is_authenticated %}{{ block.super }}{% endif %}
+{% endblock %}
+
 {% block content %}
-    {% if not user.is_authenticated %}
+    {% if not user.is_authenticated %} <!-- logged out -->
         <div class="hero">
         <svg class="hero-logo" viewBox="0 0 130 130" width="140" height="140" aria-hidden="true">
             <rect width="130" height="130" rx="30" fill="#e3efe5"/>
