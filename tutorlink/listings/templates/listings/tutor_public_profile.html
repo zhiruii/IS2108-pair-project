@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ profile.user.first_name }} {{ profile.user.last_name }}{% endblock %}
+{% block title %}{{ profile.user.get_full_name }}{% endblock %}
 
 {% block header %}
-Tutor Profile
+{{ profile.user.get_full_name }}'s Profile
 {% endblock %}
 
 {% block content %}
@@ -68,7 +68,7 @@ Tutor Profile
                 {% for i in "12345" %}{% if forloop.counter <= r.stars %}★{% else %}☆{% endif %}{% endfor %}
             </td>
             <td>{{ r.package.enrolment_request.listing.get_subject_display }}</td>
-            <td>{{ r.rater.first_name }}</td>
+            <td>{{ r.rater.get_full_name }}</td>
             <td>{{ r.created_at|date:"d M Y" }}</td>
         </tr>
         {% empty %}

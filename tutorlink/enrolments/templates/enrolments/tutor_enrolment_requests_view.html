@@ -25,7 +25,11 @@
         <tr>
             <td>{{ r.listing }}</td>
             <td>{{ r.child }}</td>
-            <td>{{ r.child.parent.first_name }} {{ r.child.parent.last_name }}</td>
+            <td>
+                <a href="{% url 'parent_public_profile_view' r.child.parent.pk %}">
+                {{ r.child.parent.get_full_name }}
+                </a>
+            </td>
             <td>
                 {% if r.parent_count %}
                     ★ {{ r.parent_avg|floatformat:1 }} ({{ r.parent_count }})
