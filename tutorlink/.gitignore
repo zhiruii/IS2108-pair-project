@@ -4,3 +4,4 @@ db.sqlite3
 .venv/
 venv/
 .env
+db_before_reset.sqlite3
