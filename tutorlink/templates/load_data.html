@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block header %}Demo data{% endblock %}
+
+{% block sidebar %}
+    {% if user.is_authenticated %}{{ block.super }}{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if already_loaded %}
+        <p>Demo data was already loaded, nothing was changed.</p>
+    {% else %}
+        <p>Demo data loaded successfully.</p>
+    {% endif %}
+
+    <h2>Demo accounts</h2>
+    <p>The password for every account is <strong>demo1234</strong>.</p>
+    <table>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+        </tr>
+        {% for email, name, role in accounts %}
+        <tr>
+            <td>{{ email }}</td>
+            <td>{{ name }}</td>
+            <td>{{ role }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a class="btn" href="{% url 'login' %}">Log in</a></p>
+{% endblock %}
