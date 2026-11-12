@@ -91,6 +91,8 @@ def tutor_requests_view(request):
     if request.user.role != "TUTOR":
         return redirect("index")
 
+    expire_overdue_requests()
+    
     pending_requests = (
         EnrolmentRequest.objects.filter(
             listing__tutor__user=request.user, status="PENDING"
@@ -130,6 +132,9 @@ def tutor_requests_view(request):
 def tutor_accept_request_view(request, pk):
     if request.user.role != "TUTOR":
         return redirect("index")
+    
+    expire_overdue_requests()
+    
     enrolment_request = get_object_or_404(
         EnrolmentRequest,
         pk=pk,
