@@ -9,10 +9,10 @@ from .views import (
 )
 
 urlpatterns = [
-    path("parent-view-listings/", parent_listings_view, name="parent_listings_view"),
-    path("tutor-view-listings/", tutor_listings_view, name="tutor_listings_view"),
+    path("browse-listings/", parent_listings_view, name="parent_listings_view"),
+    path("my-listings/", tutor_listings_view, name="tutor_listings_view"),
     path("create-listing/", create_listing_view, name="create_listing_view"),
-    path("edit-listing/<int:pk>/", edit_listing_view, name="edit_listing_view"),
-    path("close-listing/<int:pk>/", close_listing_view, name="close_listing_view"),
-    path("tutor-profile/<int:pk>/", tutor_public_profile_view, name="tutor_public_profile_view")
+    path("<int:pk>/edit/", edit_listing_view, name="edit_listing_view"),
+    path("<int:pk>/close/", close_listing_view, name="close_listing_view"),
+    path("tutor/<int:pk>/", tutor_public_profile_view, name="tutor_public_profile_view")
 ]

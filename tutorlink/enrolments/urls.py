@@ -14,28 +14,32 @@ from .views import (
 
 urlpatterns = [
     path(
-        "send_enrolment_request/<int:pk>/",
+        "request/<int:pk>/",
         send_enrolment_request_view,
         name="send_enrolment_request_view",
     ),
     path(
-        "parent_my_requests_view/",
+        "my-requests/",
         parent_my_requests_view,
         name="parent_my_requests_view",
     ),
     path(
-        "parent_withdraw_request_view/<int:pk>/",
+        "my-requests/<int:pk>/withdraw/",
         parent_withdraw_request_view,
         name="parent_withdraw_request_view",
     ),
-    path("tutor_requests_view/", tutor_requests_view, name="tutor_requests_view"),
     path(
-        "tutor_accept_request_view/<int:pk>/",
+        "requests/",
+        tutor_requests_view,
+        name="tutor_requests_view",
+    ),
+    path(
+        "requests/<int:pk>/accept/",
         tutor_accept_request_view,
         name="tutor_accept_request_view",
     ),
     path(
-        "tutor_decline_request_view/<int:pk>/",
+        "requests/<int:pk>/decline/",
         tutor_decline_request_view,
         name="tutor_decline_request_view",
     ),
@@ -50,7 +54,7 @@ urlpatterns = [
         name="tutor_view_my_schedule"
     ),
     path(
-        "complete/<int:pk>/",
+        "lessons/<int:pk>/complete/",
         tutor_complete_lesson_view,
         name="tutor_complete_lesson_view"
     ),
