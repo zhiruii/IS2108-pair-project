@@ -1,6 +1,6 @@
 Group 21
 
-Valmonte Janelle Darcy Juban, A0300338R
+Valmonte Janelle Darcy Juban, A0300338R, e1354704@u.nus.edu, 85710900
 Li Zhirui, A0322266J
 
 -- HOW TO RUN TUTORLINK WITH DEMO DATA --
