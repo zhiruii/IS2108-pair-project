@@ -1,7 +1,7 @@
 Group 21
 
 Valmonte Janelle Darcy Juban, A0300338R, e1354704@u.nus.edu, 85710900
-Li Zhirui, A0322266J
+Li Zhirui, A0322266J, e1525173@u.nus.edu, 97736278
 
 -- HOW TO RUN TUTORLINK WITH DEMO DATA --
 1. Create and activate a virtual environment, then install the requirements:
@@ -26,4 +26,4 @@ The trained price model (ml/price_model.joblib) is included, so no training is n
 To retrain it: python manage.py train_price_model
 
 -- DEMO VIDEO --
-[YouTube link]
+https://youtu.be/MOBKJrWXyJ8
