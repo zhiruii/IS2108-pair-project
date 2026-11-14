@@ -26,4 +26,4 @@ The trained price model (ml/price_model.joblib) is included, so no training is n
 To retrain it: python manage.py train_price_model
 
 -- DEMO VIDEO --
-https://youtu.be/MOBKJrWXyJ8
+https://youtu.be/b8jQaBSHJd8
