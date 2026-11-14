@@ -46,7 +46,7 @@ Available listings
     </select>
 
     <label>Max rate: $<span id="rate-value">{{ selected.max_rate|default:100 }}</span>/hr</label>
-    <input type="range" name="max_rate" min="10" max="100" step="5" value="{{ selected.max_rate|default:100 }}"
+    <input type="range" name="max_rate" min="10" max="200" step="5" value="{{ selected.max_rate|default:100 }}"
         oninput="document.getElementById('rate-value').textContent = this.value">
 
     <button type="submit">Filter</button>
