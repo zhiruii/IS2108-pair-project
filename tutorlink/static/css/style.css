@@ -531,32 +531,18 @@ img.avatar {
     gap: 12px;
 }
 
-/* whole logo bobs up and down */
+.hero-hover {
+    background: var(--green-pale);
+    border-radius: var(--radius);
+    padding: 24px 16px;
+    margin-top: 32px;
+    text-align: center;
+}
+
 .hero-logo {
-    animation: float 4s ease-in-out infinite;
+    transition: transform 0.2s ease-in-out;
 }
 
-/* leaf sways from its stem */
-.hero-logo .leaf {
-    transform-box: fill-box;          /* measure the origin from the leaf itself */
-    transform-origin: bottom left;    /* = where the stem meets the book */
-    animation: sway 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-10px); }
-}
-
-@keyframes sway {
-    0%, 100% { transform: rotate(-6deg); }
-    50%      { transform: rotate(6deg); }
-}
-
-/* respect users who turn off motion in their OS settings */
-@media (prefers-reduced-motion: reduce) {
-    .hero-logo,
-    .hero-logo .leaf {
-        animation: none;
-    }
+.hero-logo:hover {
+    transform: scale(1.02) translateY(-2px);
 }
